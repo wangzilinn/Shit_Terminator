@@ -13,9 +13,7 @@ import processing.core.PVector;
 class Ship{
     private final PApplet sketch;
     float fuel = 100;
-
     boolean dead = false;
-
     /**
      * 死亡时的位置:
      */
@@ -35,11 +33,11 @@ class Ship{
                 && oil.position.y + oil.size.y >= sketch.mouseY && oil.position.y <= sketch.mouseY + size.y;
     }
 
-    void addFuel(float addedFuel){
-        if(dead){
+    void absorbFuel(Oil oil) {
+        if (dead) {
             return;
         }
-        fuel = fuel + addedFuel;
+        fuel += oil.volume;
     }
 
     void updateAndDraw(){

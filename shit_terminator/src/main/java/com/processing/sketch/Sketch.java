@@ -60,7 +60,7 @@ public class Sketch extends PApplet {
             oil.updateAndDraw();
 
             if(ship.checkIfAbsorb(oil)){
-                ship.addFuel(oil.volume);
+                ship.absorbFuel(oil);
                 oilIter.remove();
             } else if(oil.position.x >= width){// 超出画面范围
                 oilIter.remove();
@@ -73,10 +73,10 @@ public class Sketch extends PApplet {
             Bullet bullet = BulletIter.next();
             bullet.updateAndDraw();
             //敌方飞船检查是否被击中:
-            if(enemyShip.checkIfHit(bullet)){
+            if (enemyShip.checkIfHit(bullet)) {
                 enemyShip.hit(bullet);
                 BulletIter.remove();
-            } else if(bullet.position.x <= 0){
+            } else if (bullet.position.x <= 0) {// 超出画面范围
                 BulletIter.remove();
             }
         }
