@@ -4,6 +4,8 @@ import processing.core.PVector;
 
 /**
  * @Author: huangyiqin
+ * @Date: 5/16/2021 8:37 PM
+ * @Modified: wangzilinn@gmail.com
  */
 class Bullet{
     private final PApplet sketch;

@@ -4,8 +4,9 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 /**
- * @Author: wangzilinn@gmail.com
+ * @Author: huangyiqin
  * @Date: 5/16/2021 8:35 PM
+ * @Modified: wangzilinn@gmail.com
  */
 // A simple Particle class
 

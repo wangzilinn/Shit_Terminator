@@ -6,6 +6,7 @@ import processing.core.PVector;
 /**
  * @Author: wangzilinn@gmail.com
  * @Date: 5/16/2021 10:05 PM
+ * @Modified: wangzilinn@gmail.com
  */
 public class Screen {
     private final PApplet sketch;

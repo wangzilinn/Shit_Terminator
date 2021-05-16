@@ -6,8 +6,9 @@ import processing.core.PVector;
 import javax.swing.text.Position;
 
 /**
- * @Author: wangzilinn@gmail.com
+ * @Author: huangyiqin
  * @Date: 5/16/2021 8:35 PM
+ * @Modified: wangzilinn@gmail.com
  */
 class Oil {
     private final PApplet sketch;

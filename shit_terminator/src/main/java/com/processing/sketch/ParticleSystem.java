@@ -6,8 +6,9 @@ import processing.core.PVector;
 import java.util.ArrayList;
 
 /**
- * @Author: wangzilinn@gmail.com
+ * @Author: huangyiqin
  * @Date: 5/16/2021 8:37 PM
+ * @Modified: wangzilinn@gmail.com
  */
 // A class to describe a group of Particles
 // An ArrayList is used to manage the list of Particles
