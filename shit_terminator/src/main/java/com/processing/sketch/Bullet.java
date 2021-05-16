@@ -1,30 +1,32 @@
 package com.processing.sketch;
 import processing.core.PApplet;
+import processing.core.PVector;
 
 /**
  * @Author: huangyiqin
  */
 class Bullet{
-    private PApplet sketch;
+    private final PApplet sketch;
 
-    int x ;
-    int y ;
+    PVector position;
+    PVector size;
 
-    Bullet(PApplet sketch) {
+    /**
+     * 这个子弹可以让坏蛋掉多少血
+     */
+    float damage;
+
+    Bullet(PApplet sketch, float x, float y, float damage) {
         this.sketch = sketch;
+        this.position = new PVector(x, y);
+        this.size = new PVector(10, 10);
+        this.damage = damage;
     }
 
-    void update(){
-
-        x = x - 5;
+    void updateAndDraw(){
+        position.x -= 5;
         sketch.fill(0);
-        sketch.ellipse(x,y, 10, 10);
+        sketch.ellipse(position.x,position.y, size.x, size.y);
 
-    }
-
-    int delete(){
-        sketch.fill(255);
-        sketch.ellipse(x,y, 10, 10);
-        return 0;
     }
 }

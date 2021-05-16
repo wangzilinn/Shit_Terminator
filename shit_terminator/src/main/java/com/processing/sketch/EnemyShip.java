@@ -1,7 +1,7 @@
 package com.processing.sketch;
 
 import processing.core.PApplet;
-
+import processing.core.PVector;
 
 
 /**
@@ -11,65 +11,70 @@ import processing.core.PApplet;
 
 
 class EnemyShip{
-    private PApplet sketch;
+    private final PApplet sketch;
 
-    int x = 0;
-    int y = 0;
+    PVector position;
+
+    /**
+     * 飞船的大小,在该范围内被击中
+     */
+    PVector size;
 
     int blood = 50;
     boolean dead = false;
 
-    EnemyShip(PApplet sketch) {
+    EnemyShip(PApplet sketch, float initX, float initY) {
         this.sketch = sketch;
+        this.position = new PVector(initX, initY);
+        this.size = new PVector(50, 50);
     }
 
-    void moveUp(){
-        if(dead){
+    void moveAndDraw(Direction direction) {
+        if (dead) {
             return;
         }
-        y = y - 10;
-
-        sketch.fill(blood);
-        sketch.rect(x,y, 50,50);
-
-
-    }
-
-    void moveDown(){
-        if(dead){
-            return;
+        switch (direction) {
+            case UP:
+                position.y -= 10;
+                break;
+            case DOWN:
+                position.y += 10;
+                break;
+            case LEFT:
+                position.x -= 10;
+                break;
+            case RIGHT:
+                position.x += 10;
         }
 
-        y = y + 10;
         sketch.fill(blood);
-        sketch.rect(x,y, 50,50);
-
+        sketch.rect(position.x, position.y, size.x,size.y);
     }
 
+    /**
+     * @return 飞船泄露一滴油
+     */
     Oil leak(){
         if(dead){
             return null;
         }
-        Oil oil = new Oil(sketch);
-        oil.x = x;
-        oil.y = y;
-        return oil;
+        return new Oil(sketch, position.x, position.y, 10);
     }
 
-    int explode(){
-        sketch.fill(255);
-        sketch.rect(x,y, 50, 50);
-        //explosion effect
-        dead = true;
-        return 50;
+
+    /**
+     * @param bullet 子弹
+     * @return 该子弹是否会击中自己
+     */
+    boolean checkIfHit(Bullet bullet) {
+        return bullet.position.x + bullet.size.x >= position.x && bullet.position.x <= position.x + size.x
+                && bullet.position.y + bullet.size.y >= position.y && bullet.position.y <= position.y + size.y;
     }
 
-    int hitted(){
-        blood = blood - 10;
-        if(blood == 0){
-            int explodeScore = explode();
-            return explodeScore;
+    void hit(Bullet bullet){
+        blood -= bullet.damage;
+        if(blood <= 0){
+            dead = true;
         }
-        return 10;
     }
 }

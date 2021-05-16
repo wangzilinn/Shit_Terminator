@@ -1,6 +1,7 @@
 package com.processing.sketch;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 
 /**
  * @Author: wangzilinn@gmail.com
@@ -9,64 +10,64 @@ import processing.core.PApplet;
 
 
 class Ship{
-    private PApplet sketch;
-    int score = 0;
-    double d;
-    int r;
+    private final PApplet sketch;
+    float fuel = 100;
+
     boolean dead = false;
-    int deadx, deady;
+
+    /**
+     * 死亡时的位置:
+     */
+    PVector deadPosition;
+    PVector size;
+
 
     Ship(PApplet sketch) {
         this.sketch = sketch;
+        this.deadPosition = new PVector();
+        this.size = new PVector(50, 50);
     }
 
-    void addScore(int addedScore){
+    boolean checkIfAbsorb(Oil oil) {
+        //注意还要考虑Oil的尺寸
+        return oil.position.x + oil.size.x  >= sketch.mouseX && oil.position.x <= sketch.mouseX + size.x
+                && oil.position.y + oil.size.y >= sketch.mouseY && oil.position.y <= sketch.mouseY + size.y;
+    }
+
+    void addFuel(float addedFuel){
         if(dead){
-            return ;
+            return;
         }
-        score = score + addedScore;
+        fuel = fuel + addedFuel;
     }
 
-    int getScore(){
-        return score;
-    }
-
-    void mouse(){
+    void updateAndDraw(){
         if(dead){
             sketch.fill(0);
-            sketch.rect(deadx,deady, 50, 50);
+            sketch.rect(deadPosition.x,deadPosition.y, 50, 50);
             return ;
         }
         sketch.fill(0);
         sketch.rect(sketch.mouseX,sketch.mouseY, 50, 50);
-        d =
+        double d =
                 Math.sqrt((sketch.pmouseX - sketch.mouseX)*(sketch.pmouseX - sketch.mouseX)+(sketch.pmouseY - sketch.mouseY)*(sketch.pmouseY - sketch.mouseY));
-        r = (int)Math.floor(d/25);
-        score = score - r;
-        if(score < 0 && !dead){
+        int r = (int)Math.floor(d/25);
+        fuel = fuel - r;
+        if(fuel <= 0 && !dead){
             dead = true;
-            deadx = sketch.mouseX;
-            deady = sketch.mouseY;
+            deadPosition.x = sketch.mouseX;
+            deadPosition.y = sketch.mouseY;
         }
     }
 
     Bullet shoot(){
-        if(score < 10){
+        if(fuel < 10){
             return null;
         }
-        //if we don't have enough oil, then return null directily
-        Bullet bullet = new Bullet(sketch);
-        bullet.x = sketch.mouseX + 25;
-        bullet.y = sketch.mouseY + 25;
-        score = score - 10;
+        //if we don't have enough oil, then return null directly
+        Bullet bullet = new Bullet(sketch, sketch.mouseX + 25, sketch.mouseY + 25, 10);
+        fuel = fuel - 10;
         return bullet;
     }
-
-    void lose(){
-        if(score <= 0){
-
-        }
-    }
-
 
 }
