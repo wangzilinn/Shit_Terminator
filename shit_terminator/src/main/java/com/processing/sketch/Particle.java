@@ -11,18 +11,18 @@ import processing.core.PVector;
 // A simple Particle class
 
 class Particle{
-    private PApplet sketch;
+    private final PApplet sketch;
     PVector position;
     PVector velocity;
     PVector acceleration;
-    float lifespan;
+    int lifespan;
 
-    Particle(PApplet sketch, PVector l) {
+    Particle(PApplet sketch, PVector position, float height, float width, int lifespan) {
         this.sketch = sketch;
         acceleration = new PVector((float) 0.05, 0);
-        velocity = new PVector(this.sketch.random(-1, 1), this.sketch.random(-2, 2));
-        position = l.copy();
-        lifespan = 255.0f;
+        velocity = new PVector(this.sketch.random(0, width), this.sketch.random(-(height / 2), height / 2));
+        this.position = position.copy();
+        this.lifespan = lifespan;
     }
 
     void run() {
@@ -34,7 +34,7 @@ class Particle{
     void update() {
         velocity.add(acceleration);
         position.add(velocity);
-        lifespan -= 5.0;
+        lifespan -= 5;
     }
 
     // Method to display
@@ -46,10 +46,6 @@ class Particle{
 
     // Is the particle still useful?
     boolean isDead() {
-        if (lifespan < 0.0) {
-            return true;
-        } else {
-            return false;
-        }
+        return lifespan < 0;
     }
 }

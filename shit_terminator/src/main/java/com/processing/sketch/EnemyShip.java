@@ -52,6 +52,7 @@ class EnemyShip{
         sketch.rect(position.x, position.y, size.x,size.y);
     }
 
+
     /**
      * @return 飞船泄露一滴油
      */

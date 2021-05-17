@@ -21,7 +21,7 @@ public class Screen {
      * 用于记录每一个关卡的名字显示的时间
      */
     HashMap<Integer, Integer> levelNamesCounterMap;
-    ParticleSystem ps;
+    ParticleGroup ps;
 
     public Screen(PApplet sketch) {
         this.sketch = sketch;
@@ -32,7 +32,7 @@ public class Screen {
         for (int i = 0; i < levels.length; i++) {
             levelNamesCounterMap.put(i, 40);
         }
-        ps = new ParticleSystem(sketch, new PVector((float) sketch.width / 2, 50));
+        ps = new ParticleGroup(sketch, 6, 2, 200);
     }
 
     /**

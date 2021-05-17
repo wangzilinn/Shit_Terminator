@@ -73,6 +73,7 @@ public class Sketch extends PApplet {
             //如果显示了关卡名字,则直接显示下一帧
             return;
         }
+
         if (a % 30 < 15) {
             enemyShip.moveAndDraw(Direction.DOWN);
         } else {
