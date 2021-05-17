@@ -21,7 +21,7 @@ class EnemyShip{
      */
     PVector size;
 
-    int blood = 50;
+    int blood = 1;
     boolean dead = false;
 
     EnemyShip(PApplet sketch, float initX, float initY) {
@@ -72,10 +72,18 @@ class EnemyShip{
                 && bullet.position.y + bullet.size.y >= position.y && bullet.position.y <= position.y + size.y;
     }
 
-    void hit(Bullet bullet){
+    void hit(Bullet bullet) {
         blood -= bullet.damage;
-        if(blood <= 0){
+        if (blood <= 0) {
             dead = true;
         }
+    }
+
+    /**
+     * 重置飞船的参数,在新的关卡时用到
+     */
+    void reset() {
+        blood = 1;
+        dead = false;
     }
 }
