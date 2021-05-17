@@ -21,7 +21,7 @@ class EnemyShip{
      */
     PVector size;
 
-    int blood = 1;
+    int blood = 50;
     boolean dead = false;
 
     EnemyShip(PApplet sketch, float initX, float initY) {
@@ -83,7 +83,7 @@ class EnemyShip{
      * 重置飞船的参数,在新的关卡时用到
      */
     void reset() {
-        blood = 1;
+        blood = 50;
         dead = false;
     }
 }

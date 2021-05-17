@@ -22,10 +22,6 @@ public class Screen {
      */
     HashMap<Integer, Integer> levelNamesCounterMap;
     ParticleSystem ps;
-    /**
-     * 显示关卡名字的帧数
-     */
-    int levelNameScreenFrameNumber = 120;
 
     public Screen(PApplet sketch) {
         this.sketch = sketch;
@@ -39,6 +35,11 @@ public class Screen {
         ps = new ParticleSystem(sketch, new PVector((float) sketch.width / 2, 50));
     }
 
+    /**
+     * 绘制通关页面
+     *
+     * @param shipPosition 要显示飞船效果的位置
+     */
     @CalledByDraw
     public void drawWinScreen(PVector shipPosition) {
         String str = "You Win";
@@ -52,6 +53,11 @@ public class Screen {
         ps.run();
     }
 
+    /**
+     * 绘制失败页面
+     *
+     * @param shipPosition 要显示飞船效果的位置
+     */
     @CalledByDraw
     public void drawLoseScreen(PVector shipPosition) {
         String str = "You Lose";
@@ -65,6 +71,11 @@ public class Screen {
         ps.run();
     }
 
+    /**
+     * 绘制下一关
+     *
+     * @param shipPosition 要显示飞船效果的位置
+     */
     @CalledByDraw
     public void drawNextLevelScreen(PVector shipPosition) {
         sketch.fill(0);
@@ -78,6 +89,9 @@ public class Screen {
         ps.run();
     }
 
+    /**
+     * 绘制打开游戏的第一个界面
+     */
     @CalledByDraw
     public void drawReadyScreen() {
         sketch.fill(0);
@@ -108,6 +122,9 @@ public class Screen {
         return false;
     }
 
+    /**
+     * 重置每一关的名字显示的帧数的计数器
+     */
     void resetDrawLevelNameScreenCounter() {
         for (Map.Entry<Integer, Integer> entry : levelNamesCounterMap.entrySet()) {
             entry.setValue(50);

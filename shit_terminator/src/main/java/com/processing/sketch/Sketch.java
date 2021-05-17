@@ -119,7 +119,7 @@ public class Sketch extends PApplet {
             }
         }
 
-        // 判断是否游戏已经结束:
+        // 判断是否游戏状态是否已经改变:
         if (enemyShip.dead) {
             System.out.println("enemyShip is dead");
             if (level == maxLevel) {
