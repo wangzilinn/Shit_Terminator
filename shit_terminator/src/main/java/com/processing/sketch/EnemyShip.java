@@ -1,6 +1,5 @@
 package com.processing.sketch;
 
-import processing.core.PApplet;
 import processing.core.PVector;
 
 
@@ -12,8 +11,6 @@ import processing.core.PVector;
 
 
 class EnemyShip{
-    private final PApplet sketch;
-
     PVector position;
 
     /**
@@ -24,13 +21,12 @@ class EnemyShip{
     int blood = 50;
     boolean dead = false;
 
-    EnemyShip(PApplet sketch, float initX, float initY) {
-        this.sketch = sketch;
-        this.position = new PVector(initX, initY);
+    EnemyShip() {
+        this.position = new PVector(0, 0);
         this.size = new PVector(50, 50);
     }
 
-    void moveAndDraw(Direction direction) {
+    void move(Direction direction) {
         if (dead) {
             return;
         }
@@ -47,9 +43,6 @@ class EnemyShip{
             case RIGHT:
                 position.x += 10;
         }
-
-        sketch.fill(blood);
-        sketch.rect(position.x, position.y, size.x,size.y);
     }
 
 
@@ -60,7 +53,7 @@ class EnemyShip{
         if(dead){
             return null;
         }
-        return new Oil(sketch, position.x, position.y, 10);
+        return new Oil(position, 10);
     }
 
 

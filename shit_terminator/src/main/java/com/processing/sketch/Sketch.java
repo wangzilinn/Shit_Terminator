@@ -1,6 +1,7 @@
 package com.processing.sketch;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,53 +13,48 @@ import java.util.LinkedList;
  * @Modified: wangzilinn@gmail.com
  */
 public class Sketch extends PApplet {
-    /**
-     * 游戏总关卡数:2关
-     */
-    final private int maxLevel = 1;
-    Screen screen;
+
+    Info info;
     EnemyShip enemyShip;
+    Ship ship;
+    LinkedList<Oil> oilList = new LinkedList<>();
+    LinkedList<Bullet> bulletList = new LinkedList<>();
 
     double a = 0;
     int b = 0;
-    Ship ship;
+
     private State state = State.READY;
-    /**
-     * 游戏当前关卡数:从0开始
-     */
-    private int level = 0;
 
-
-    LinkedList<Oil> oilList = new LinkedList<>();
-    LinkedList<Bullet> bulletList = new LinkedList<>();
+    DrawSystem drawSystem;
 
     public void settings() {
         size(1500, 800);
     }
 
     public void setup() {
-        screen = new Screen(this);
-        enemyShip = new EnemyShip(this, 0, 0);
-        ship = new Ship(this);
+        info = new Info();
+        drawSystem = new DrawSystem(this);
+        enemyShip = new EnemyShip();
+        ship = new Ship();
     }
 
     public void draw() {
         background(255);
         switch (state) {
             case READY:
-                screen.drawReadyScreen();
+                drawSystem.drawReadyScreen();
                 break;
             case PASS:
-                screen.drawNextLevelScreen(enemyShip.position);
+                drawSystem.drawNextLevelScreen(enemyShip.position);
                 break;
             case RUNNING:
                 drawGame();
                 break;
             case WIN:
-                screen.drawWinScreen(enemyShip.position);
+                drawSystem.drawWinScreen(enemyShip.position);
                 break;
             case OVER:
-                screen.drawLoseScreen(enemyShip.position);
+                drawSystem.drawLoseScreen(enemyShip.position);
                 break;
         }
     }
@@ -69,15 +65,15 @@ public class Sketch extends PApplet {
     @CalledByDraw
     private void drawGame() {
         //检查是否需要显示关卡名字:
-        if (screen.checkAndDrawLevelNameScreen(level)) {
+        if (drawSystem.checkAndDrawLevelNameScreen(info)) {
             //如果显示了关卡名字,则直接显示下一帧
             return;
         }
-
+        // 执行游戏逻辑:
         if (a % 30 < 15) {
-            enemyShip.moveAndDraw(Direction.DOWN);
+            enemyShip.move(Direction.DOWN);
         } else {
-            enemyShip.moveAndDraw(Direction.UP);
+            enemyShip.move(Direction.UP);
         }
         a += 0.3;
 
@@ -90,14 +86,13 @@ public class Sketch extends PApplet {
         }
         b++;
 
-        ship.updateAndDraw();
+        ship.moveTo(new PVector(mouseX, mouseY));
 
         //遍历所有油滴,检查鼠标操作的飞船是否可以吸收这个油滴
         Iterator<Oil> oilIter = oilList.iterator();
         while(oilIter.hasNext()){
             Oil oil = oilIter.next();
-            oil.updateAndDraw();
-
+            oil.move();
             if(ship.checkIfAbsorb(oil)){
                 ship.absorbFuel(oil);
                 oilIter.remove();
@@ -110,7 +105,7 @@ public class Sketch extends PApplet {
         Iterator<Bullet> BulletIter = bulletList.iterator();
         while(BulletIter.hasNext()){
             Bullet bullet = BulletIter.next();
-            bullet.updateAndDraw();
+            bullet.move();
             //敌方飞船检查是否被击中:
             if (enemyShip.checkIfHit(bullet)) {
                 enemyShip.hit(bullet);
@@ -123,25 +118,28 @@ public class Sketch extends PApplet {
         // 判断是否游戏状态是否已经改变:
         if (enemyShip.dead) {
             System.out.println("enemyShip is dead");
-            if (level == maxLevel) {
+            if (info.isMaxLevel()) {
                 state = State.WIN;
-                level = 0;
-                screen.resetDrawLevelNameScreenCounter();
+                info.resetLevel();
+                drawSystem.resetDrawLevelNameScreenCounter();
             } else {
                 state = State.PASS;
-                level++;
+                info.upgradeLevel();
             }
             ship.reset();
             enemyShip.reset();
-        } else if(ship.dead) {
+        } else if (ship.dead) {
             state = State.OVER;
-            level = 0;
-            screen.resetDrawLevelNameScreenCounter();
+            info.resetLevel();
+            drawSystem.resetDrawLevelNameScreenCounter();
         }
 
-        fill(0);
-        textSize(12);
-        text("Remaining fuel:" + ship.fuel,10, 500);
+        //开始绘制画面:
+        drawSystem.drawEnemyShip(enemyShip);
+        drawSystem.drawShip(ship);
+        drawSystem.drawBullets(bulletList);
+        drawSystem.drawOils(oilList);
+        drawSystem.drawGameLayout(info, ship);
     }
 
     public void keyPressed() {

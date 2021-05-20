@@ -1,6 +1,5 @@
 package com.processing.sketch;
 
-import processing.core.PApplet;
 import processing.core.PVector;
 
 /**
@@ -10,8 +9,7 @@ import processing.core.PVector;
  */
 
 
-class Ship{
-    private final PApplet sketch;
+class Ship {
     float fuel = 100;
     boolean dead = false;
     /**
@@ -20,9 +18,12 @@ class Ship{
     PVector deadPosition;
     PVector size;
 
+    PVector position;
+    PVector lastPosition;
 
-    Ship(PApplet sketch) {
-        this.sketch = sketch;
+
+    Ship() {
+        position = new PVector(0, 0);
         this.deadPosition = new PVector();
         this.size = new PVector(50, 50);
     }
@@ -33,8 +34,7 @@ class Ship{
      */
     boolean checkIfAbsorb(Oil oil) {
         //注意还要考虑Oil的尺寸
-        return oil.position.x + oil.size.x >= sketch.mouseX && oil.position.x <= sketch.mouseX + size.x
-                && oil.position.y + oil.size.y >= sketch.mouseY && oil.position.y <= sketch.mouseY + size.y;
+        return oil.position.dist(position) < oil.size.mag();
     }
 
     /**
@@ -49,26 +49,19 @@ class Ship{
         fuel += oil.volume;
     }
 
-    void updateAndDraw() {
-        if (dead) {
-            sketch.fill(0);
-            sketch.rect(deadPosition.x, deadPosition.y, size.x, size.y);
-            return;
-        }
-        sketch.fill(0);
-        sketch.rect(sketch.mouseX, sketch.mouseY, size.x, size.y);
-
+    void moveTo(PVector target) {
+        lastPosition = position;
+        position = target;
         // 减少燃料:
-        double d =
-                Math.sqrt((sketch.pmouseX - sketch.mouseX) * (sketch.pmouseX - sketch.mouseX) + (sketch.pmouseY - sketch.mouseY) * (sketch.pmouseY - sketch.mouseY));
+        double d = position.dist(lastPosition);
         int r = (int) Math.floor(d / 25);
         fuel = fuel - r;
         // 判断是否没有燃料了
         if (fuel <= 0 && !dead) {
             dead = true;
-            deadPosition.x = sketch.mouseX;
-            deadPosition.y = sketch.mouseY;
+            deadPosition = position.copy();
         }
+
     }
 
     Bullet shoot() {
@@ -76,7 +69,7 @@ class Ship{
             return null;
         }
         //if we don't have enough oil, then return null directly
-        Bullet bullet = new Bullet(sketch, sketch.mouseX + size.x / 2, sketch.mouseY + size.y / 2, 10);
+        Bullet bullet = new Bullet(position.add(size.div(2)), 10);
         fuel = fuel - 10;
         return bullet;
     }

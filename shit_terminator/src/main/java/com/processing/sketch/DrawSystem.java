@@ -4,6 +4,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,27 +12,18 @@ import java.util.Map;
  * @Date: 5/16/2021 10:05 PM
  * @Modified: wangzilinn@gmail.com
  */
-public class Screen {
+public class DrawSystem {
     private final PApplet sketch;
     PVector centerPosition;
     PVector size;
-
-    String[] levels = new String[]{"Hero", "Salvation"};
-    /**
-     * 用于记录每一个关卡的名字显示的时间
-     */
-    HashMap<Integer, Integer> levelNamesCounterMap;
     ParticleGroup ps;
+    HashMap<Integer, Integer> levelNamesCounterMap;
 
-    public Screen(PApplet sketch) {
+    public DrawSystem(PApplet sketch) {
         this.sketch = sketch;
         System.out.println(sketch.width);
         centerPosition = new PVector((float) sketch.width / 2, (float) sketch.height / 2);
         size = new PVector(sketch.width, sketch.height);
-        levelNamesCounterMap = new HashMap<>();
-        for (int i = 0; i < levels.length; i++) {
-            levelNamesCounterMap.put(i, 40);
-        }
         ps = new ParticleGroup(sketch, 6, 2, 200);
     }
 
@@ -106,20 +98,64 @@ public class Screen {
     /**
      * 检查是否需要显示关卡名字, 如果不需要则不显示
      *
-     * @param level 关数
+     * @param info 游戏信息
      * @return 是否显示了关卡名字
      */
     @CalledByDraw
-    public boolean checkAndDrawLevelNameScreen(int level) {
-        if (levelNamesCounterMap.get(level) > 0) {
-            String str = "Chapter " + (level + 1) + ": " + levels[level];
+    public boolean checkAndDrawLevelNameScreen(Info info) {
+        if (levelNamesCounterMap == null) {
+            levelNamesCounterMap = new HashMap<>();
+            for (int i = 0; i < info.getMaxLevel(); i++) {
+                levelNamesCounterMap.put(i, 40);
+            }
+        }
+        int currentLevel = info.getCurrentLevel();
+        if (levelNamesCounterMap.get(currentLevel) > 0) {
+            String str = "Chapter " + (currentLevel + 1) + ": " + info.getCurrentLevelName();
             sketch.fill(0);
             sketch.textSize(60);
             sketch.text(str, getAlignX(str, 60, size.x), centerPosition.y);
-            levelNamesCounterMap.computeIfPresent(level, (key, value) -> --value);
+            levelNamesCounterMap.computeIfPresent(currentLevel, (key, value) -> --value);
             return true;
         }
         return false;
+    }
+
+    @CalledByDraw
+    public void drawEnemyShip(EnemyShip enemyShip) {
+        sketch.fill(enemyShip.blood);
+        sketch.rect(enemyShip.position.x, enemyShip.position.y, enemyShip.size.x, enemyShip.size.y);
+    }
+
+    @CalledByDraw
+    public void drawShip(Ship ship) {
+        if (ship.dead) {
+            sketch.fill(0);
+            sketch.rect(ship.deadPosition.x, ship.deadPosition.y, ship.size.x, ship.size.y);
+            return;
+        }
+        sketch.fill(0);
+        sketch.rect(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
+    }
+
+    public void drawBullets(List<Bullet> bulletList) {
+        for (Bullet bullet : bulletList) {
+            sketch.fill(0);
+            sketch.ellipse(bullet.position.x, bullet.position.y, bullet.size.x, bullet.size.y);
+        }
+    }
+
+    public void drawOils(List<Oil> oilList) {
+        for (Oil oil : oilList) {
+            sketch.fill(200);
+            sketch.ellipse(oil.position.x, oil.position.y, oil.size.x, oil.size.y);
+        }
+    }
+
+    public void drawGameLayout(Info info, Ship ship) {
+        sketch.fill(0);
+        sketch.textSize(12);
+        sketch.text("Remaining fuel:" + ship.fuel, 10, 500);
     }
 
     /**
