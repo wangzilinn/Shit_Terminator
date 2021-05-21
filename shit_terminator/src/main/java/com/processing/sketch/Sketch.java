@@ -28,7 +28,7 @@ public class Sketch extends PApplet {
     DrawSystem drawSystem;
 
     public void settings() {
-        size(1500, 800);
+        size(800, 600);
     }
 
     public void setup() {
@@ -39,6 +39,7 @@ public class Sketch extends PApplet {
     }
 
     public void draw() {
+
         background(255);
         switch (state) {
             case READY:
@@ -76,7 +77,6 @@ public class Sketch extends PApplet {
             enemyShip.move(Direction.UP);
         }
         a += 0.3;
-
         if (b % 3 == 0) {
             Oil oils = enemyShip.leak();
             if (oils != null) {
@@ -100,7 +100,6 @@ public class Sketch extends PApplet {
                 oilIter.remove();
             }
         }
-
         //遍历所有子弹,检查子弹是否超出画面,是否击中敌方飞船
         Iterator<Bullet> BulletIter = bulletList.iterator();
         while(BulletIter.hasNext()){

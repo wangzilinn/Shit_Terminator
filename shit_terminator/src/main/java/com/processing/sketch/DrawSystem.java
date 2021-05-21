@@ -105,7 +105,7 @@ public class DrawSystem {
     public boolean checkAndDrawLevelNameScreen(Info info) {
         if (levelNamesCounterMap == null) {
             levelNamesCounterMap = new HashMap<>();
-            for (int i = 0; i < info.getMaxLevel(); i++) {
+            for (int i = 0; i <= info.getMaxLevel(); i++) {
                 levelNamesCounterMap.put(i, 40);
             }
         }

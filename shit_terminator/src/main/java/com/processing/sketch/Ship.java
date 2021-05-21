@@ -68,8 +68,9 @@ class Ship {
         if (fuel < 10) {
             return null;
         }
+
         //if we don't have enough oil, then return null directly
-        Bullet bullet = new Bullet(position.add(size.div(2)), 10);
+        Bullet bullet = new Bullet(position.add(size.copy().div(2)), 10);
         fuel = fuel - 10;
         return bullet;
     }
