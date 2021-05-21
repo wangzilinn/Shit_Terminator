@@ -176,10 +176,14 @@ public class Sketch extends PApplet {
     }
 
     public void mousePressed() {
-        Bullet bullet = ship.shoot(new PVector(mouseX, mouseY));
+        Bullet bullet = ship.shoot();
         if (bullet != null) {
             // if shit doesn't have enough oil,then the bullet is null
             bulletList.add(bullet);
         }
+    }
+
+    public void mouseMoved() {
+        ship.updateShootDirection(new PVector(mouseX, mouseY));
     }
 }

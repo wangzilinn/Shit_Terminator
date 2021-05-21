@@ -20,6 +20,11 @@ class Ship {
 
     PVector position;
     PVector lastPosition;
+
+    /**
+     * 射击时鼠标的方向
+     */
+    PVector shootDirection;
     /**
      * 每移动一次移动的距离
      */
@@ -30,6 +35,7 @@ class Ship {
         position = new PVector(0, 0);
         this.deadPosition = new PVector();
         this.size = new PVector(50, 50);
+        this.shootDirection = new PVector(1, 1);
     }
 
     /**
@@ -69,15 +75,18 @@ class Ship {
     }
 
 
-    Bullet shoot(PVector mousePosition) {
+    Bullet shoot() {
         if (fuel < 10) {
             return null;
         }
-        PVector direction = mousePosition.copy().sub(position.copy()).normalize();
         //if we don't have enough oil, then return null directly
-        Bullet bullet = new Bullet(position.copy().add(size.copy().div(2)), direction, 10);
+        Bullet bullet = new Bullet(position.copy(), shootDirection, 10);
         fuel = fuel - 10;
         return bullet;
+    }
+
+    void updateShootDirection(PVector mousePosition) {
+        shootDirection = mousePosition.copy().sub(position.copy()).normalize();
     }
 
     /**

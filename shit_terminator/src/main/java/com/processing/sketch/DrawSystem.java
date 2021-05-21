@@ -135,13 +135,21 @@ public class DrawSystem {
             return;
         }
         sketch.fill(0);
-        sketch.rect(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
+        sketch.rect(ship.position.x - ship.size.x / 2, ship.position.y - ship.size.y / 2, ship.size.x, ship.size.y);
+
+        sketch.pushMatrix();
+        sketch.translate(ship.position.x, ship.position.y);
+        sketch.rotate(ship.shootDirection.heading() + 90);
+        sketch.fill(255);
+        sketch.triangle(0, -ship.size.y / 3, -ship.size.x / 3, ship.size.x / 3, ship.size.x / 3, ship.size.x / 3);
+        sketch.popMatrix();
     }
 
     public void drawBullets(List<Bullet> bulletList) {
         for (Bullet bullet : bulletList) {
             sketch.fill(0);
-            sketch.ellipse(bullet.position.x, bullet.position.y, bullet.size.x, bullet.size.y);
+            sketch.ellipse(bullet.position.x - bullet.size.x / 2, bullet.position.y - bullet.size.y / 2, bullet.size.x
+                    , bullet.size.y);
         }
     }
 

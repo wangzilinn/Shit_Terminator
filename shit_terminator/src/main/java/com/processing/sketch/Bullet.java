@@ -21,7 +21,7 @@ class Bullet {
     float damage;
 
     Bullet(PVector position, PVector directionVector, float damage) {
-        this.directionVector = directionVector;
+        this.directionVector = directionVector.copy();
         this.position = position.copy();
         this.size = new PVector(10, 10);
         this.damage = damage;
