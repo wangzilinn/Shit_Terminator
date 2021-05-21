@@ -168,18 +168,17 @@ public class Sketch extends PApplet {
         }
 
         pressedKeys.add(key);
-
-        int keyNumber = key - 80;
-        if (keyNumber == 10 || keyNumber == 42) {
-            Bullet bullet = ship.shoot();
-            if (bullet != null) {
-                // if shit doesn't have enough oil,then the bullet is null
-                bulletList.add(bullet);
-            }
-        }
     }
 
     public void keyReleased() {
         pressedKeys.remove(key);
+    }
+
+    public void mouseClicked() {
+        Bullet bullet = ship.shoot();
+        if (bullet != null) {
+            // if shit doesn't have enough oil,then the bullet is null
+            bulletList.add(bullet);
+        }
     }
 }
