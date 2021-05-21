@@ -1,6 +1,7 @@
 package com.processing.sketch;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -174,8 +175,8 @@ public class Sketch extends PApplet {
         pressedKeys.remove(key);
     }
 
-    public void mouseClicked() {
-        Bullet bullet = ship.shoot();
+    public void mousePressed() {
+        Bullet bullet = ship.shoot(new PVector(mouseX, mouseY));
         if (bullet != null) {
             // if shit doesn't have enough oil,then the bullet is null
             bulletList.add(bullet);

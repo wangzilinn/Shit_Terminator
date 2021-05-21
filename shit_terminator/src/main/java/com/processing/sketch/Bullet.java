@@ -11,6 +11,7 @@ class Bullet {
 
     PVector position;
     PVector size;
+    PVector directionVector;
 
     int distance;
 
@@ -19,7 +20,8 @@ class Bullet {
      */
     float damage;
 
-    Bullet(PVector position, float damage) {
+    Bullet(PVector position, PVector directionVector, float damage) {
+        this.directionVector = directionVector;
         this.position = position.copy();
         this.size = new PVector(10, 10);
         this.damage = damage;
@@ -28,6 +30,6 @@ class Bullet {
     @CalledByDraw
     void move() {
         distance++;
-        position.x -= 5;
+        position.add(directionVector.copy().mult(5));
     }
 }
