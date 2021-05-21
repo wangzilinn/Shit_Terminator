@@ -27,22 +27,7 @@ class EnemyShip{
     }
 
     void move(Direction direction) {
-        if (dead) {
-            return;
-        }
-        switch (direction) {
-            case UP:
-                position.y -= 10;
-                break;
-            case DOWN:
-                position.y += 10;
-                break;
-            case LEFT:
-                position.x -= 10;
-                break;
-            case RIGHT:
-                position.x += 10;
-        }
+        MoveSystem.move(direction, dead, position);
     }
 
 

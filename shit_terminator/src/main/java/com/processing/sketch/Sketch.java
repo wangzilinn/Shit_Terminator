@@ -1,9 +1,9 @@
 package com.processing.sketch;
 
 import processing.core.PApplet;
-import processing.core.PVector;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 
@@ -13,6 +13,9 @@ import java.util.LinkedList;
  * @Modified: wangzilinn@gmail.com
  */
 public class Sketch extends PApplet {
+
+    // 实现识别多个按键:
+    LinkedHashSet<Character> pressedKeys = new LinkedHashSet<>();
 
     Info info;
     EnemyShip enemyShip;
@@ -86,17 +89,28 @@ public class Sketch extends PApplet {
         }
         b++;
 
-        ship.moveTo(new PVector(mouseX, mouseY));
+        if (pressedKeys.contains('w')) {
+            ship.move(Direction.UP);
+        }
+        if (pressedKeys.contains('s')) {
+            ship.move(Direction.DOWN);
+        }
+        if (pressedKeys.contains('a')) {
+            ship.move(Direction.LEFT);
+        }
+        if (pressedKeys.contains('d')) {
+            ship.move(Direction.RIGHT);
+        }
 
         //遍历所有油滴,检查鼠标操作的飞船是否可以吸收这个油滴
         Iterator<Oil> oilIter = oilList.iterator();
-        while(oilIter.hasNext()){
+        while (oilIter.hasNext()) {
             Oil oil = oilIter.next();
             oil.move();
-            if(ship.checkIfAbsorb(oil)){
+            if (ship.checkIfAbsorb(oil)) {
                 ship.absorbFuel(oil);
                 oilIter.remove();
-            } else if(oil.position.x >= width){// 超出画面范围
+            } else if (oil.position.x >= width) {// 超出画面范围
                 oilIter.remove();
             }
         }
@@ -152,6 +166,9 @@ public class Sketch extends PApplet {
                 state = State.RUNNING;
             }
         }
+
+        pressedKeys.add(key);
+
         int keyNumber = key - 80;
         if (keyNumber == 10 || keyNumber == 42) {
             Bullet bullet = ship.shoot();
@@ -160,5 +177,9 @@ public class Sketch extends PApplet {
                 bulletList.add(bullet);
             }
         }
+    }
+
+    public void keyReleased() {
+        pressedKeys.remove(key);
     }
 }
