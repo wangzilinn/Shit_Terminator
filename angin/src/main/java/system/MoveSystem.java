@@ -1,4 +1,4 @@
-package System;
+package system;
 
 import enums.Direction;
 import processing.core.PVector;

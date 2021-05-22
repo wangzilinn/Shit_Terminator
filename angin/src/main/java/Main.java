@@ -1,3 +1,4 @@
+import Draw.DrawSystem;
 import annotation.CalledByDraw;
 import entity.*;
 import enums.Direction;
@@ -9,8 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import System.*;
-
 public class Main extends PApplet{
     // 实现识别多个按键:
     LinkedHashSet<Character> pressedKeys = new LinkedHashSet<>();
@@ -18,7 +17,7 @@ public class Main extends PApplet{
     Info info;
     EnemyShip enemyShip;
     Ship ship;
-    LinkedList<Oil> oilList = new LinkedList<>();
+    LinkedList<Fuel> fuelList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
 
     double a = 0;
@@ -79,10 +78,10 @@ public class Main extends PApplet{
         }
         a += 0.3;
         if (b % 3 == 0) {
-            Oil oils = enemyShip.leak();
+            Fuel oils = enemyShip.leak();
             if (oils != null) {
                 //if ship is destroyed, then the oil is null
-                oilList.add(oils);
+                fuelList.add(oils);
             }
         }
         b++;
@@ -101,14 +100,14 @@ public class Main extends PApplet{
         }
 
         //遍历所有油滴,检查鼠标操作的飞船是否可以吸收这个油滴
-        Iterator<Oil> oilIter = oilList.iterator();
+        Iterator<Fuel> oilIter = fuelList.iterator();
         while (oilIter.hasNext()) {
-            Oil oil = oilIter.next();
-            oil.move();
-            if (ship.checkIfAbsorb(oil)) {
-                ship.absorbFuel(oil);
+            Fuel fuel = oilIter.next();
+            fuel.move();
+            if (ship.checkIfAbsorb(fuel)) {
+                ship.absorbFuel(fuel);
                 oilIter.remove();
-            } else if (oil.position.x >= width) {// 超出画面范围
+            } else if (fuel.position.x >= width) {// 超出画面范围
                 oilIter.remove();
             }
         }
@@ -149,7 +148,7 @@ public class Main extends PApplet{
         drawSystem.drawEnemyShip(enemyShip);
         drawSystem.drawShip(ship);
         drawSystem.drawBullets(bulletList);
-        drawSystem.drawOils(oilList);
+        drawSystem.drawOils(fuelList);
         drawSystem.drawGameLayout(info, ship);
     }
 

@@ -1,8 +1,10 @@
-package System;
+package Draw;
 
+import Draw.handler.ShipHandler;
 import annotation.CalledByDraw;
 import entity.*;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 import java.util.HashMap;
@@ -123,42 +125,75 @@ public class DrawSystem {
         return false;
     }
 
+
     @CalledByDraw
     public void drawEnemyShip(EnemyShip enemyShip) {
         sketch.fill(enemyShip.blood);
         sketch.rect(enemyShip.position.x, enemyShip.position.y, enemyShip.size.x, enemyShip.size.y);
     }
 
+    ShipHandler shipHandler;
+
     @CalledByDraw
     public void drawShip(Ship ship) {
+        if (shipHandler == null) {
+            shipHandler = new ShipHandler(ship);
+        }
+
         if (ship.dead) {
             sketch.fill(0);
             sketch.rect(ship.deadPosition.x, ship.deadPosition.y, ship.size.x, ship.size.y);
             return;
         }
-        sketch.fill(0);
-        sketch.rect(ship.position.x - ship.size.x / 2, ship.position.y - ship.size.y / 2, ship.size.x, ship.size.y);
+        //画外面的圈圈:
+        for (int i = 0; i < shipHandler.getCircleColor().length; i++) {
+            sketch.noFill();
+            sketch.stroke(shipHandler.getCircleColor()[i]);
+            // sketch.ellipseMode(CENTER);
+            float radius = ship.size.x + (i + 1) * (1 + i);
+            sketch.ellipse(ship.position.x, ship.position.y, radius, radius);
+        }
+        //更新外面圈圈的颜色
+        if (sketch.frameCount % 6 == 0) {
+            shipHandler.updateCircleColor();
+        }
 
+        sketch.fill(0);
+        sketch.ellipse(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
+        //画炮塔:
         sketch.pushMatrix();
         sketch.translate(ship.position.x, ship.position.y);
-        sketch.rotate(ship.shootDirection.heading() + 90);
+        sketch.rotate(ship.shootDirection.heading() + PConstants.PI/2);
         sketch.fill(255);
         sketch.triangle(0, -ship.size.y / 3, -ship.size.x / 3, ship.size.x / 3, ship.size.x / 3, ship.size.x / 3);
         sketch.popMatrix();
+
+
     }
 
     public void drawBullets(List<Bullet> bulletList) {
         for (Bullet bullet : bulletList) {
             sketch.fill(0);
-            sketch.ellipse(bullet.position.x - bullet.size.x / 2, bullet.position.y - bullet.size.y / 2, bullet.size.x
-                    , bullet.size.y);
+            sketch.noStroke();
+            sketch.ellipse(bullet.position.x, bullet.position.y , bullet.size.x, bullet.size.y);
         }
     }
 
-    public void drawOils(List<Oil> oilList) {
-        for (Oil oil : oilList) {
+    public void drawOils(List<Fuel> fuelList) {
+        for (Fuel fuel : fuelList) {
+            // switch (fuel.getFuelClass()) {
+            //     case RED:
+            //         sketch.fill(255, 0, 0);
+            //         break;
+            //     case GREEN:
+            //         sketch.fill(0,255,0);
+            //         break;
+            //     case BLUE:
+            //         sketch.fill(0, 0, 255);
+            // }
             sketch.fill(200);
-            sketch.ellipse(oil.position.x, oil.position.y, oil.size.x, oil.size.y);
+            sketch.noStroke();
+            sketch.ellipse(fuel.position.x, fuel.position.y, fuel.size.x, fuel.size.y);
         }
     }
 

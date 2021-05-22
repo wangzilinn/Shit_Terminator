@@ -3,7 +3,7 @@ package entity;
 import enums.Direction;
 import processing.core.PVector;
 
-import System.*;
+import system.*;
 
 
 /**
@@ -37,11 +37,11 @@ public class EnemyShip{
     /**
      * @return 飞船泄露一滴油
      */
-    public Oil leak(){
+    public Fuel leak(){
         if(dead){
             return null;
         }
-        return new Oil(position, 10);
+        return new Fuel(position, 10);
     }
 
 

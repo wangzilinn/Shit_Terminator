@@ -1,9 +1,12 @@
 package entity;
 
 import enums.Direction;
+import enums.FuelClass;
 import processing.core.PVector;
 
-import System.*;
+import system.*;
+
+import java.util.HashMap;
 
 /**
  * @Author: huangyiqin
@@ -13,6 +16,12 @@ import System.*;
 
 
 public class Ship {
+
+    /**
+     * 盛放不同燃料的容器
+     */
+    HashMap<FuelClass, Float> fuelTankMap;
+
     public float fuel = 100;
     public boolean dead = false;
     /**
@@ -35,31 +44,33 @@ public class Ship {
 
 
     public Ship() {
-        position = new PVector(0, 0);
+        this.position = new PVector(0, 0);
         this.deadPosition = new PVector();
         this.size = new PVector(50, 50);
         this.shootDirection = new PVector(1, 1);
+        this.fuelTankMap = new HashMap<>();
     }
 
     /**
-     * @param oil 要吸收的油滴
+     * @param fuel 要吸收的油滴
      * @return 是否可以吸收
      */
-    public boolean checkIfAbsorb(Oil oil) {
+    public boolean checkIfAbsorb(Fuel fuel) {
         //注意还要考虑Oil的尺寸
-        return oil.position.dist(position) < oil.size.mag();
+        return fuel.position.dist(position) < fuel.size.mag();
     }
 
     /**
      * 执行吸收油滴的逻辑
      *
-     * @param oil 要吸收的油滴
+     * @param fuel 要吸收的油滴
      */
-    public void absorbFuel(Oil oil) {
+    public void absorbFuel(Fuel fuel) {
         if (dead) {
             return;
         }
-        fuel += oil.volume;
+        fuelTankMap.put(fuel.getFuelClass(), fuel.volume);
+        this.fuel += fuel.volume;
     }
 
 
