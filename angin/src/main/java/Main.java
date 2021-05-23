@@ -28,7 +28,7 @@ public class Main extends PApplet{
     DrawSystem drawSystem;
 
     public void settings(){
-        size(800, 600);
+        size((int) Meta.size.x, (int) Meta.size.y);
     }
 
     public void setup() {

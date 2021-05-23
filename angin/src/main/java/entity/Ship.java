@@ -1,10 +1,10 @@
 package entity;
 
+import Draw.printer.ShipPrinter;
 import enums.Direction;
 import enums.FuelClass;
+import lombok.Getter;
 import processing.core.PVector;
-
-import system.*;
 
 import java.util.HashMap;
 
@@ -34,13 +34,19 @@ public class Ship {
     PVector lastPosition;
 
     /**
-     * 射击时鼠标的方向
+     * 射击部分:
      */
     public PVector shootDirection;
+    final private Gun gun;
     /**
-     * 每移动一次移动的距离
+     * 移动部分:
      */
     float step;
+    final private Engine engine;
+
+    @Getter
+    private final ShipPrinter printer;
+
 
 
     public Ship() {
@@ -49,6 +55,9 @@ public class Ship {
         this.size = new PVector(50, 50);
         this.shootDirection = new PVector(1, 1);
         this.fuelTankMap = new HashMap<>();
+        this.printer = new ShipPrinter();
+        this.gun = new Gun(fuel);
+        this.engine = new Engine(fuel, new PVector(10, 10), new PVector(0, 0), false);
     }
 
     /**
@@ -76,11 +85,13 @@ public class Ship {
 
     public void move(Direction direction) {
         lastPosition = position;
-        MoveSystem.move(direction, dead, position);
+        engine.setDirection(direction);
+        position.add(engine.getVelocity());
         // 减少燃料:
         double d = position.dist(lastPosition);
         int r = (int) Math.floor(d / 25);
         fuel = fuel - r;
+        engine.setFuel(fuel);
         // 判断是否没有燃料了
         if (fuel <= 0 && !dead) {
             dead = true;
@@ -90,12 +101,9 @@ public class Ship {
 
 
     public Bullet shoot() {
-        if (fuel < 10) {
-            return null;
-        }
-        //if we don't have enough oil, then return null directly
-        Bullet bullet = new Bullet(position.copy(), shootDirection, 10);
-        fuel = fuel - 10;
+        gun.setRemainingEnergy(fuel);
+        Bullet bullet  = gun.shoot(position.copy(), shootDirection.copy());
+        fuel = gun.getRemainingEnergy();
         return bullet;
     }
 

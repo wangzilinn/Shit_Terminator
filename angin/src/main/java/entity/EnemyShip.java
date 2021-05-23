@@ -3,7 +3,6 @@ package entity;
 import enums.Direction;
 import processing.core.PVector;
 
-import system.*;
 
 
 /**
@@ -16,6 +15,9 @@ import system.*;
 public class EnemyShip{
     public PVector position;
 
+    final private Engine engine;
+    public float fuel = 1000;
+
     /**
      * 飞船的大小,在该范围内被击中
      */
@@ -27,10 +29,12 @@ public class EnemyShip{
     public EnemyShip() {
         this.position = new PVector(0, 0);
         this.size = new PVector(50, 50);
+        this.engine = new Engine(fuel, new PVector(10, 10), new PVector(0, 0), false);
     }
 
     public void move(Direction direction) {
-        MoveSystem.move(direction, dead, position);
+        engine.setDirection(direction);
+        position.add(engine.getVelocity());
     }
 
 

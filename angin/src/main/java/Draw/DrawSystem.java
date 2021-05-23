@@ -1,6 +1,6 @@
 package Draw;
 
-import Draw.handler.ShipHandler;
+import Draw.printer.ShipPrinter;
 import annotation.CalledByDraw;
 import entity.*;
 import processing.core.PApplet;
@@ -17,11 +17,14 @@ import java.util.Map;
  * @Modified: wangzilinn@gmail.com
  */
 public class DrawSystem {
+
     private final PApplet sketch;
     PVector centerPosition;
     PVector size;
     ParticleGroup ps;
     HashMap<Integer, Integer> levelNamesCounterMap;
+
+
 
     public DrawSystem(PApplet sketch) {
         this.sketch = sketch;
@@ -132,13 +135,11 @@ public class DrawSystem {
         sketch.rect(enemyShip.position.x, enemyShip.position.y, enemyShip.size.x, enemyShip.size.y);
     }
 
-    ShipHandler shipHandler;
+
 
     @CalledByDraw
     public void drawShip(Ship ship) {
-        if (shipHandler == null) {
-            shipHandler = new ShipHandler(ship);
-        }
+        ShipPrinter shipPrinter = ship.getPrinter();
 
         if (ship.dead) {
             sketch.fill(0);
@@ -146,16 +147,16 @@ public class DrawSystem {
             return;
         }
         //画外面的圈圈:
-        for (int i = 0; i < shipHandler.getCircleColor().length; i++) {
+        for (int i = 0; i < shipPrinter.getCircleColor().length; i++) {
             sketch.noFill();
-            sketch.stroke(shipHandler.getCircleColor()[i]);
+            sketch.stroke(shipPrinter.getCircleColor()[i]);
             // sketch.ellipseMode(CENTER);
             float radius = ship.size.x + (i + 1) * (1 + i);
             sketch.ellipse(ship.position.x, ship.position.y, radius, radius);
         }
         //更新外面圈圈的颜色
         if (sketch.frameCount % 6 == 0) {
-            shipHandler.updateCircleColor();
+            shipPrinter.updateCircleColor();
         }
 
         sketch.fill(0);

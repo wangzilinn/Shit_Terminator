@@ -1,4 +1,4 @@
-package Draw.handler;
+package Draw.printer;
 
 import entity.Ship;
 import lombok.Data;
@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
  * @Date: 5/22/2021 9:43 PM
  */
 @Data
-@RequiredArgsConstructor
-public class ShipHandler {
-    final private Ship ship;
+public class ShipPrinter {
 
     int frameCnt;
     int maxCnt;
