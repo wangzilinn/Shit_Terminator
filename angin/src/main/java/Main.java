@@ -2,6 +2,7 @@ import Draw.DrawSystem;
 import annotation.CalledByDraw;
 import entity.*;
 import enums.Direction;
+import enums.Role;
 import enums.State;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -16,9 +17,9 @@ public class Main extends PApplet{
     LinkedHashSet<Character> pressedKeys = new LinkedHashSet<>();
 
     Info info;
-    EnemyShip enemyShip;
-    Ship ship;
-    LinkedList<Fuel> fuelList = new LinkedList<>();
+    Ship enemyShip;
+    Ship playerShip;
+    LinkedList<Resource> resourceList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
 
     double a = 0;
@@ -35,8 +36,8 @@ public class Main extends PApplet{
     public void setup() {
         info = new Info();
         drawSystem = new DrawSystem(this);
-        enemyShip = new EnemyShip();
-        ship = new Ship();
+        enemyShip = new Ship(Role.COMPUTER);
+        playerShip = new Ship(Role.PLAYER);
     }
 
     public void draw() {
@@ -71,46 +72,51 @@ public class Main extends PApplet{
             //如果显示了关卡名字,则直接显示下一帧
             return;
         }
-        // 执行游戏逻辑:
-        // if (a % 30 < 15) {
-        //     enemyShip.move(Direction.DOWN);
-        // } else {
-        //     enemyShip.move(Direction.UP);
-        // }
-        // a += 0.3;
-        enemyShip.move(ship.position);
-
+        // 产资源:
         if (b % 3 == 0) {
-            Fuel oils = enemyShip.leak();
-            if (oils != null) {
-                //if ship is destroyed, then the oil is null
-                fuelList.add(oils);
-            }
+            Resource resource = new Resource();
+            resourceList.add(resource);
         }
         b++;
 
-        if (pressedKeys.contains('w')) {
-            ship.move(Direction.UP);
+        enemyShip.move(playerShip.position);
+        enemyShip.updateShootDirection(playerShip.position);
+
+        if (frameCount % 60 == 0) {
+            System.out.println("enemy shoot");
+            Bullet bullet = enemyShip.shoot(playerShip);
+            if (bullet != null) {
+                bulletList.add(bullet);
+            }
         }
-        if (pressedKeys.contains('s')) {
-            ship.move(Direction.DOWN);
+
+        if (pressedKeys.contains('w') && playerShip.position.y > 0) {
+            playerShip.move(Direction.UP);
         }
-        if (pressedKeys.contains('a')) {
-            ship.move(Direction.LEFT);
+        if (pressedKeys.contains('s') && playerShip.position.y < height) {
+            playerShip.move(Direction.DOWN);
         }
-        if (pressedKeys.contains('d')) {
-            ship.move(Direction.RIGHT);
+        if (pressedKeys.contains('a') && playerShip.position.x > 0) {
+            playerShip.move(Direction.LEFT);
+        }
+        if (pressedKeys.contains('d') && playerShip.position.x < width) {
+            playerShip.move(Direction.RIGHT);
         }
 
         //遍历所有油滴,检查鼠标操作的飞船是否可以吸收这个油滴
-        Iterator<Fuel> oilIter = fuelList.iterator();
+        Iterator<Resource> oilIter = resourceList.iterator();
         while (oilIter.hasNext()) {
-            Fuel fuel = oilIter.next();
-            fuel.move();
-            if (ship.checkIfAbsorb(fuel)) {
-                ship.absorbFuel(fuel);
+            Resource resource = oilIter.next();
+            resource.reduceLife();
+            if (resource.getRemainLife() <= 0) {
                 oilIter.remove();
-            } else if (fuel.position.x >= width) {// 超出画面范围
+            }else if(playerShip.checkIfAbsorb(resource)) {
+                System.out.println("player absorb");
+                playerShip.absorbFuel(resource);
+                oilIter.remove();
+            } else if (enemyShip.checkIfAbsorb(resource)) {
+                System.out.println("enemy absorb");
+                enemyShip.absorbFuel(resource);
                 oilIter.remove();
             }
         }
@@ -119,11 +125,15 @@ public class Main extends PApplet{
         while(BulletIter.hasNext()){
             Bullet bullet = BulletIter.next();
             bullet.move();
-            //敌方飞船检查是否被击中:
-            if (enemyShip.checkIfHit(bullet)) {
+            //飞船是否被击中:
+            if (bullet.role == Role.PLAYER && enemyShip.checkIfHit(bullet)) {
                 enemyShip.hit(bullet);
                 BulletIter.remove();
-            } else if (bullet.position.x <= 0) {// 超出画面范围
+            } else if (bullet.role == Role.COMPUTER && playerShip.checkIfHit(bullet)) {
+                playerShip.hit(bullet);
+                BulletIter.remove();
+            } else if (bullet.position.x <= 0 || bullet.position.x >= width || bullet.position.y <= 0 || bullet.position.y >= height) {
+                // 超出画面范围
                 BulletIter.remove();
             }
         }
@@ -139,20 +149,20 @@ public class Main extends PApplet{
                 state = State.PASS;
                 info.upgradeLevel();
             }
-            ship.reset();
-            enemyShip.reset();
-        } else if (ship.dead) {
+            playerShip = new Ship(Role.PLAYER);
+            enemyShip = new Ship(Role.COMPUTER);
+        } else if (playerShip.dead) {
             state = State.OVER;
             info.resetLevel();
             drawSystem.resetDrawLevelNameScreenCounter();
         }
 
         //开始绘制画面:
-        drawSystem.drawEnemyShip(enemyShip);
-        drawSystem.drawShip(ship);
+        drawSystem.drawShip(enemyShip);
+        drawSystem.drawShip(playerShip);
         drawSystem.drawBullets(bulletList);
-        drawSystem.drawOils(fuelList);
-        drawSystem.drawGameLayout(info, ship);
+        drawSystem.drawOils(resourceList);
+        drawSystem.drawGameLayout(info, playerShip, enemyShip);
     }
 
     public void keyPressed() {
@@ -175,15 +185,16 @@ public class Main extends PApplet{
     }
 
     public void mousePressed() {
-        Bullet bullet = ship.shoot();
+        Bullet bullet = playerShip.shoot(enemyShip);
         if (bullet != null) {
+            System.out.println("player shoot");
             // if shit doesn't have enough oil,then the bullet is null
             bulletList.add(bullet);
         }
     }
 
     public void mouseMoved() {
-        ship.updateShootDirection(new PVector(mouseX, mouseY));
+        playerShip.updateShootDirection(new PVector(mouseX, mouseY));
     }
 
     public static void main(String... args){

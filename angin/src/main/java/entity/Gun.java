@@ -1,5 +1,7 @@
 package entity;
 
+import enums.ResourceClass;
+import enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import processing.core.PVector;
@@ -16,15 +18,21 @@ public class Gun {
     /**
      * 枪的剩余子弹数
      */
-    private float remainingEnergy;
+    private ResourceContainer resourceContainer;
+    private Role role;
 
+    /**
+     * @param position 枪的当前坐标
+     * @param shootDirection 发射方向
+     * @return 子弹
+     */
     public Bullet shoot(PVector position, PVector shootDirection) {
-        if (remainingEnergy < 10) {
+        if (resourceContainer.get(ResourceClass.AMMO) < 10) {
             return null;
         }
         //if we don't have enough oil, then return null directly
-        Bullet bullet = new Bullet(position.copy(), shootDirection, 10);
-        remainingEnergy -= 10;
+        Bullet bullet = new Bullet(position.copy(), shootDirection, 10, role);
+        resourceContainer.decrease(ResourceClass.AMMO, 10);
         return bullet;
     }
 }

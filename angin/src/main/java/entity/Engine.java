@@ -16,7 +16,7 @@ public class Engine {
     /**
      * 引擎剩余的燃料
      */
-    private float fuel;
+    private ResourceContainer resourceContainer;
     private PVector velocity;
     private PVector acceleration;
     private boolean enableAcceleration;
@@ -56,6 +56,23 @@ public class Engine {
     }
 
     public PVector getVelocity() {
-        return velocity.add(acceleration);
+        accLimiter(0.03f);
+        velocity.add(acceleration);
+        return velocity;
+    }
+
+    private void accLimiter(float limit) {
+        if (acceleration.x > limit) {
+            acceleration.x = limit;
+        }
+        if (acceleration.x < -limit) {
+            acceleration.x = -limit;
+        }
+        if (acceleration.y > limit) {
+            acceleration.y = limit;
+        }
+        if (acceleration.y < -limit) {
+            acceleration.y = -limit;
+        }
     }
 }

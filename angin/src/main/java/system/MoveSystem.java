@@ -16,10 +16,11 @@ public class MoveSystem {
     }
 
     public static PVector randomVelocity() {
-        return new PVector((float) (Math.random() - 0.5) * 10, (float) (Math.random()  - 0.5)* 10);
+        return new PVector((float) (Math.random() - 0.5) * 5, (float) (Math.random()  - 0.5)* 5);
     }
 
     /**
+     * 完全碰撞模型
      * @param engine .
      * @param position 当前entity所在位置
      */
@@ -35,19 +36,40 @@ public class MoveSystem {
     }
 
     /**
+     * 避免碰撞模型
      * @param engine .
      * @param currentPosition 当前所在位置
      * @param avoidPosition 要躲避的entity所在位置
      */
     public static void avoidanceModel(Engine engine, PVector currentPosition, PVector avoidPosition) {
-        PVector sub = currentPosition.copy().sub(avoidPosition);
-        if (sub.mag() < 80) {
-            engine.setAcceleration(sub.mult((float) 0.005));
-        }
-        if (Math.abs(engine.getVelocity().mag()) > 5) {
-            PVector acc = engine.getVelocity().copy().normalize().mult(-0.001f);
+        float dist = currentPosition.dist(avoidPosition);
+        PVector sub = currentPosition.copy().sub(avoidPosition).normalize();
+        PVector direction = sub.copy().normalize();
+        PVector acc = direction.mult(1 / dist * 10);
+        if (dist < 300) {
             engine.setAcceleration(acc);
         }
+    }
+
+    /**
+     * 滑动摩擦模型
+     * @param engine .
+     */
+    public static void frictionModel(Engine engine) {
+        PVector accDirection = engine.getVelocity().copy().normalize();
+        PVector friction = accDirection.mult(-0.001f);
+        PVector acc = engine.getAcceleration().copy();
+        if (Math.abs(engine.getVelocity().x) > 3) {
+            acc.x += friction.x;
+        }else {
+            acc.x = 0;
+        }
+        if (Math.abs(engine.getVelocity().y) > 3) {
+            acc.y += friction.y;
+        }else {
+            acc.y = 0;
+        }
+        engine.setAcceleration(acc);
     }
 
 

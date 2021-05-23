@@ -2,11 +2,13 @@ package entity;
 
 import Draw.printer.ShipPrinter;
 import enums.Direction;
-import enums.FuelClass;
+import enums.ResourceClass;
+import enums.Role;
 import lombok.Getter;
 import processing.core.PVector;
-
-import java.util.HashMap;
+import system.AimingSystem;
+import system.Meta;
+import system.MoveSystem;
 
 /**
  * @Author: huangyiqin
@@ -14,15 +16,12 @@ import java.util.HashMap;
  * @Modified: wangzilinn@gmail.com
  */
 
-
 public class Ship {
 
     /**
-     * 盛放不同燃料的容器
+     * 盛放不同资源的容器
      */
-    HashMap<FuelClass, Float> fuelTankMap;
-
-    public float fuel = 100;
+    public ResourceContainer resourceContainer;
     public boolean dead = false;
     /**
      * 死亡时的位置:
@@ -41,71 +40,135 @@ public class Ship {
     /**
      * 移动部分:
      */
-    float step;
-    final private Engine engine;
+    private Engine engine;
+
+    private Role role;
 
     @Getter
     private final ShipPrinter printer;
 
-
-
-    public Ship() {
-        this.position = new PVector(0, 0);
+    public Ship(Role role) {
+        this.role = role;
         this.deadPosition = new PVector();
         this.size = new PVector(50, 50);
         this.shootDirection = new PVector(1, 1);
-        this.fuelTankMap = new HashMap<>();
+
+        this.resourceContainer = new ResourceContainer(100, 100, 100);
+
+        this.gun = new Gun(resourceContainer, role);
+
+        switch (this.role) {
+            case COMPUTER:
+                this.position = MoveSystem.randomPosition();
+                this.engine = new Engine(resourceContainer, MoveSystem.randomVelocity(), new PVector(0, 0), true);
+                break;
+            case PLAYER:
+                this.position = new PVector(Meta.size.x / 2, Meta.size.y / 2);
+                this.engine = new Engine(resourceContainer, new PVector(0, 0), new PVector(0, 0), false);
+                break;
+        }
+
         this.printer = new ShipPrinter();
-        this.gun = new Gun(fuel);
-        this.engine = new Engine(fuel, new PVector(10, 10), new PVector(0, 0), false);
     }
 
     /**
-     * @param fuel 要吸收的油滴
+     * @param resource 要吸收的油滴
      * @return 是否可以吸收
      */
-    public boolean checkIfAbsorb(Fuel fuel) {
+    public boolean checkIfAbsorb(Resource resource) {
         //注意还要考虑Oil的尺寸
-        return fuel.position.dist(position) < fuel.size.mag();
+        if (role == Role.COMPUTER) {
+            return resource.position.dist(position) < (resource.volume );
+        }else {
+            return resource.position.dist(position) < (resource.volume * 2 + size.x);
+        }
+
     }
 
     /**
      * 执行吸收油滴的逻辑
      *
-     * @param fuel 要吸收的油滴
+     * @param resource 要吸收的油滴
      */
-    public void absorbFuel(Fuel fuel) {
+    public void absorbFuel(Resource resource) {
         if (dead) {
             return;
         }
-        fuelTankMap.put(fuel.getFuelClass(), fuel.volume);
-        this.fuel += fuel.volume;
+        resourceContainer.increase(resource.resourceClass, resource.volume);
     }
 
 
+    /**
+     * 键盘移动
+     * @param direction 移动方向
+     */
     public void move(Direction direction) {
         lastPosition = position;
         engine.setDirection(direction);
         position.add(engine.getVelocity());
         // 减少燃料:
-        double d = position.dist(lastPosition);
-        int r = (int) Math.floor(d / 25);
-        fuel = fuel - r;
-        engine.setFuel(fuel);
-        // 判断是否没有燃料了
-        if (fuel <= 0 && !dead) {
+        // float d = position.dist(lastPosition);
+        // double r = Math.floor(d / 25);
+        // resourceContainer.decrease(ResourceClass.FUEL, (float) r);
+        // 判断是否没有燃料了 TODO:这里可以不设置为死掉,而是单纯的停止移动,直到被另一个打死
+        if (resourceContainer.empty(ResourceClass.FUEL) && !dead) {
             dead = true;
             deadPosition = position.copy();
         }
     }
 
+    /**
+     * 自动移动
+     * @param enemyPosition 敌方飞船位置
+     */
+    public void move(PVector enemyPosition) {
+        MoveSystem.collisionModel(engine, position);
+        position.add(engine.getVelocity());
+        MoveSystem.avoidanceModel(engine, position, enemyPosition);
+        position.add(engine.getVelocity());
+        MoveSystem.frictionModel(engine);
+        position.add(engine.getVelocity());
+        // TODO:减少燃料
+    }
 
-    public Bullet shoot() {
-        gun.setRemainingEnergy(fuel);
-        Bullet bullet  = gun.shoot(position.copy(), shootDirection.copy());
-        fuel = gun.getRemainingEnergy();
+    /**
+     * @param bullet 子弹
+     * @return 该子弹是否会击中自己
+     */
+    public boolean checkIfHit(Bullet bullet) {
+        return bullet.position.dist(position) < size.mag();
+    }
+
+    /**
+     * 执行被击中的逻辑
+     * @param bullet 被击中时的子弹
+     */
+    public void hit(Bullet bullet) {
+        System.out.println(bullet.damage);
+        resourceContainer.decrease(ResourceClass.SHIELD, bullet.damage);
+        if (resourceContainer.empty(ResourceClass.SHIELD)) {
+            System.out.println("no shield");
+            dead = true;
+        }
+    }
+
+
+    public Bullet shoot(Ship enemyShip) {
+        Bullet bullet = null;
+        switch (role) {
+            case PLAYER:
+                bullet =  gun.shoot(position.copy(), shootDirection.copy());
+                break;
+            case COMPUTER:
+                bullet =  AimingSystem.directShootModel(gun, position, enemyShip.position);
+                break;
+        }
         return bullet;
     }
+
+
+
+
 
     public void updateShootDirection(PVector mousePosition) {
         shootDirection = mousePosition.copy().sub(position.copy()).normalize();
@@ -115,7 +178,7 @@ public class Ship {
      * 重置飞船的参数,在新的关卡时用到
      */
     public void reset() {
-        fuel = 100;
+        resourceContainer = new ResourceContainer(100, 100, 100);
         dead = false;
     }
 

@@ -3,6 +3,7 @@ package Draw;
 import Draw.printer.ShipPrinter;
 import annotation.CalledByDraw;
 import entity.*;
+import enums.ResourceClass;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -130,14 +131,6 @@ public class DrawSystem {
 
 
     @CalledByDraw
-    public void drawEnemyShip(EnemyShip enemyShip) {
-        sketch.fill(enemyShip.blood);
-        sketch.rect(enemyShip.position.x, enemyShip.position.y, enemyShip.size.x, enemyShip.size.y);
-    }
-
-
-
-    @CalledByDraw
     public void drawShip(Ship ship) {
         ShipPrinter shipPrinter = ship.getPrinter();
 
@@ -180,28 +173,37 @@ public class DrawSystem {
         }
     }
 
-    public void drawOils(List<Fuel> fuelList) {
-        for (Fuel fuel : fuelList) {
-            // switch (fuel.getFuelClass()) {
-            //     case RED:
-            //         sketch.fill(255, 0, 0);
-            //         break;
-            //     case GREEN:
-            //         sketch.fill(0,255,0);
-            //         break;
-            //     case BLUE:
-            //         sketch.fill(0, 0, 255);
-            // }
-            sketch.fill(200);
+    public void drawOils(List<Resource> resourceList) {
+        for (Resource resource : resourceList) {
+            int trans = resource.getRemainLife() * 3;
+            switch (resource.getResourceClass()) {
+                case AMMO:
+                    sketch.fill(255, 0, 0, trans);
+                    break;
+                case FUEL:
+                    sketch.fill(0, 255, 0, trans);
+                    break;
+                case SHIELD:
+                    sketch.fill(0, 0, 255, trans);
+            }
             sketch.noStroke();
-            sketch.ellipse(fuel.position.x, fuel.position.y, fuel.size.x, fuel.size.y);
+            sketch.ellipse(resource.position.x, resource.position.y, resource.getVolume() * 2,resource.getVolume() * 2);
         }
     }
 
-    public void drawGameLayout(Info info, Ship ship) {
+    public void drawGameLayout(Info info, Ship playerShip, Ship enemyShip) {
         sketch.fill(0);
         sketch.textSize(12);
-        sketch.text("Remaining fuel:" + ship.fuel, 10, 500);
+        drawResourceContainer(playerShip, new PVector(10, 500));
+        drawResourceContainer(enemyShip, new PVector(600, 500));
+    }
+
+    private void drawResourceContainer(Ship ship, PVector position) {
+        sketch.text("Remaining ammo:" + (int)ship.resourceContainer.get(ResourceClass.AMMO), position.x, position.y);
+        sketch.text("Remaining fuel:" + (int)ship.resourceContainer.get(ResourceClass.FUEL), position.x,
+                position.y + 20);
+        sketch.text("Remaining Shield:" + (int)ship.resourceContainer.get(ResourceClass.SHIELD), position.x,
+                position.y + 40);
     }
 
     /**
