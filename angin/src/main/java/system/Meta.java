@@ -1,3 +1,5 @@
+package system;
+
 import processing.core.PVector;
 
 /**
@@ -6,5 +8,5 @@ import processing.core.PVector;
  * @Date: 5/23/2021 11:30 AM
  */
 public class Meta {
-    final  public static PVector size = new PVector(800, 600);
+    final public static PVector size = new PVector(800, 600);
 }

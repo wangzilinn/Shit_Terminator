@@ -2,7 +2,7 @@ package entity;
 
 import enums.Direction;
 import processing.core.PVector;
-
+import system.MoveSystem;
 
 
 /**
@@ -27,13 +27,17 @@ public class EnemyShip{
     public boolean dead = false;
 
     public EnemyShip() {
-        this.position = new PVector(0, 0);
+        this.position = MoveSystem.randomPosition();
         this.size = new PVector(50, 50);
-        this.engine = new Engine(fuel, new PVector(10, 10), new PVector(0, 0), false);
+        this.engine = new Engine(fuel, MoveSystem.randomVelocity(), new PVector(0, 0), true);
+        // this.engine = new Engine(fuel, new PVector(0,0), new PVector(0, 0), true);
     }
 
-    public void move(Direction direction) {
-        engine.setDirection(direction);
+
+    public void move(PVector enemyPosition) {
+        MoveSystem.collisionModel(engine, position);
+        position.add(engine.getVelocity());
+        MoveSystem.avoidanceModel(engine, position, enemyPosition);
         position.add(engine.getVelocity());
     }
 

@@ -5,6 +5,7 @@ import enums.Direction;
 import enums.State;
 import processing.core.PApplet;
 import processing.core.PVector;
+import system.Meta;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -71,12 +72,14 @@ public class Main extends PApplet{
             return;
         }
         // 执行游戏逻辑:
-        if (a % 30 < 15) {
-            enemyShip.move(Direction.DOWN);
-        } else {
-            enemyShip.move(Direction.UP);
-        }
-        a += 0.3;
+        // if (a % 30 < 15) {
+        //     enemyShip.move(Direction.DOWN);
+        // } else {
+        //     enemyShip.move(Direction.UP);
+        // }
+        // a += 0.3;
+        enemyShip.move(ship.position);
+
         if (b % 3 == 0) {
             Fuel oils = enemyShip.leak();
             if (oils != null) {
