@@ -6,7 +6,6 @@ import entity.*;
 import enums.ResourceClass;
 import enums.Role;
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PVector;
 
 import java.util.HashMap;
@@ -27,7 +26,8 @@ public class DrawSystem {
     private final PApplet sketch;
     PVector centerPosition;
     PVector size;
-    ParticleGroup ps;
+    ParticleGroup deadPositionParticleGroup;
+    ParticleGroup beingHitParticleGroup;
     HashMap<Integer, Integer> levelNamesCounterMap;
 
 
@@ -37,7 +37,8 @@ public class DrawSystem {
         System.out.println(sketch.width);
         centerPosition = new PVector((float) sketch.width / 2, (float) sketch.height / 2);
         size = new PVector(sketch.width, sketch.height);
-        ps = new ParticleGroup(sketch, 6, 2, 200);
+        deadPositionParticleGroup = new ParticleGroup(sketch, 6, 2, 200);
+        beingHitParticleGroup = new ParticleGroup(sketch, 6, 6, 150);
     }
 
     /**
@@ -54,8 +55,8 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        ps.addParticle(shipPosition);
-        ps.run();
+        deadPositionParticleGroup.addParticle(shipPosition);
+        deadPositionParticleGroup.run();
     }
 
     /**
@@ -72,8 +73,8 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        ps.addParticle(shipPosition);
-        ps.run();
+        deadPositionParticleGroup.addParticle(shipPosition);
+        deadPositionParticleGroup.run();
     }
 
     /**
@@ -90,8 +91,8 @@ public class DrawSystem {
         str = "press space to start";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        ps.addParticle(shipPosition);
-        ps.run();
+        deadPositionParticleGroup.addParticle(shipPosition);
+        deadPositionParticleGroup.run();
     }
 
     /**
@@ -144,11 +145,18 @@ public class DrawSystem {
             sketch.rect(ship.deadPosition.x, ship.deadPosition.y, ship.size.x, ship.size.y);
             return;
         }
+        //如果被击中的话，开始画被集中的效果：
+        if (shipPrinter.checkIfShowBeingHitEffect()) {
+            beingHitParticleGroup.addParticle(ship.position);
+            shipPrinter.increaseBeingHitFrame();
+        }
+        //之所以不在上面的if中调用该方法是因为可能帧数已经用完了，但是有粒子还存在lifespan，得消耗完
+        beingHitParticleGroup.run();
+
         //画外面的圈圈:
         for (int i = 0; i < shipPrinter.getCircleColor().length; i++) {
             sketch.noFill();
             sketch.stroke(shipPrinter.getCircleColor()[i]);
-            // sketch.ellipseMode(CENTER);
             float radius = ship.size.x + (i + 1) * (1 + i);
             sketch.ellipse(ship.position.x, ship.position.y, radius, radius);
         }

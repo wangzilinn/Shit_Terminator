@@ -126,11 +126,11 @@ public class Main extends PApplet{
             Bullet bullet = BulletIter.next();
             bullet.move();
             //飞船是否被击中:
-            if (bullet.getRole() == Role.PLAYER && enemyShip.checkIfHit(bullet)) {
-                enemyShip.hit(bullet);
+            if (bullet.getRole() == Role.PLAYER && enemyShip.checkIfBeingHit(bullet)) {
+                enemyShip.beingHit(bullet);
                 BulletIter.remove();
-            } else if (bullet.getRole() == Role.COMPUTER && playerShip.checkIfHit(bullet)) {
-                playerShip.hit(bullet);
+            } else if (bullet.getRole() == Role.COMPUTER && playerShip.checkIfBeingHit(bullet)) {
+                playerShip.beingHit(bullet);
                 BulletIter.remove();
             } else if (bullet.position.x <= 0 || bullet.position.x >= width || bullet.position.y <= 0 || bullet.position.y >= height) {
                 // 超出画面范围

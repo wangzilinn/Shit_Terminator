@@ -18,28 +18,28 @@ public class ParticleGroup {
     private final PApplet sketch;
     LinkedList<Particle> particles;
     /**
-     * 离子束的高度
+     * 离子束的的纵向速度
      */
-    float height;
+    float yVelocity;
     /**
-     * 离子束的宽度
+     * 离子束的横向速度
      */
-    float width;
+    float xVelocity;
     /**
      * 粒子从诞生到消失的帧数
      */
     int life;
 
-    public ParticleGroup(PApplet sketch, float height, float width, int life) {
+    public ParticleGroup(PApplet sketch, float yVelocity, float xVelocity, int life) {
         this.sketch = sketch;
         particles = new LinkedList<>();
-        this.height = height;
-        this.width = width;
+        this.yVelocity = yVelocity;
+        this.xVelocity = xVelocity;
         this.life = life;
     }
 
     public void addParticle(PVector position) {
-        particles.add(new Particle(sketch, position, height, width, life));
+        particles.add(new Particle(sketch, position, yVelocity, xVelocity, life));
     }
 
     public void run() {
@@ -50,17 +50,6 @@ public class ParticleGroup {
             if (p.isDead()) {
                 particlesIter.remove();
             }
-        }
-    }
-
-    /**
-     * 平移所有粒子的位置
-     *
-     * @param offsetPosition 粒子相对当前位置平移的单位
-     */
-    void updatePosition(PVector offsetPosition) {
-        for (Particle particle : particles) {
-            particle.position.add(offsetPosition);
         }
     }
 

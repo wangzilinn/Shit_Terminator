@@ -19,8 +19,9 @@ public class Particle{
 
     Particle(PApplet sketch, PVector position, float height, float width, int lifespan) {
         this.sketch = sketch;
-        acceleration = new PVector((float) 0.05, 0);
-        velocity = new PVector(this.sketch.random(0, width), this.sketch.random(-(height / 2), height / 2));
+        acceleration = new PVector(this.sketch.random(-0.025f, 0.025f), this.sketch.random(-0.025f, 0.025f));
+        velocity = new PVector(this.sketch.random(-(width / 2), width / 2), this.sketch.random(-(height / 2),
+                height / 2));
         this.position = position.copy();
         this.lifespan = lifespan;
     }

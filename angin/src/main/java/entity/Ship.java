@@ -136,7 +136,7 @@ public class Ship {
      * @param bullet 子弹
      * @return 该子弹是否会击中自己
      */
-    public boolean checkIfHit(Bullet bullet) {
+    public boolean checkIfBeingHit(Bullet bullet) {
         return bullet.position.dist(position) < (size.mag() / 2);
     }
 
@@ -144,9 +144,11 @@ public class Ship {
      * 执行被击中的逻辑
      * @param bullet 被击中时的子弹
      */
-    public void hit(Bullet bullet) {
-        System.out.println(bullet.damage);
+    public void beingHit(Bullet bullet) {
+        System.out.println(role + " ship was hit, damage is " + bullet.damage);
         resourceContainer.decrease(ResourceClass.SHIELD, bullet.damage);
+        // 配置画笔开始显示被击中效果
+        printer.startShowingBeingHitEffect();
         if (resourceContainer.empty(ResourceClass.SHIELD)) {
             System.out.println("no shield");
             dead = true;
@@ -166,9 +168,6 @@ public class Ship {
         }
         return bullet;
     }
-
-
-
 
 
     public void updateShootDirection(PVector mousePosition) {
