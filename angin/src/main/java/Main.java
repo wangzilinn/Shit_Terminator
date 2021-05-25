@@ -21,13 +21,14 @@ public class Main extends PApplet{
     Ship playerShip;
     LinkedList<Resource> resourceList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
+    LinkedList<Block> blockList = new LinkedList<>();
 
     private State state = State.READY;
 
     DrawSystem drawSystem;
 
     public void settings(){
-        size((int) Meta.size.x, (int) Meta.size.y);
+        size((int) Meta.screenSize.x, (int) Meta.screenSize.y);
     }
 
     public void setup() {
@@ -38,7 +39,6 @@ public class Main extends PApplet{
     }
 
     public void draw() {
-
         background(255);
         switch (state) {
             case READY:
@@ -69,10 +69,17 @@ public class Main extends PApplet{
             //如果显示了关卡名字,则直接显示下一帧
             return;
         }
-        // 产资源:
+        // 生产资源:
         if (frameCount % 10 == 0) {
             Resource resource = new Resource();
             resourceList.add(resource);
+        }
+        //如果是第二关,则生成障碍
+        if (info.getCurrentLevel() == 0) {
+            if (frameCount % 60 == 0) {
+                Block block = new Block(Meta.screenSize,new PVector[]{enemyShip.position, playerShip.position} );
+                blockList.add(block);
+            }
         }
 
         enemyShip.move(playerShip.position);
@@ -97,6 +104,15 @@ public class Main extends PApplet{
         }
         if (pressedKeys.contains('d') && playerShip.position.x < width) {
             playerShip.move(Direction.RIGHT);
+        }
+
+        Iterator<Block> blockIter = blockList.iterator();
+        while (blockIter.hasNext()) {
+            Block block = blockIter.next();
+            block.reduceLife();
+            if (block.getRemainLife() <= 0) {
+                blockIter.remove();
+            }
         }
 
         //遍历所有油滴,检查鼠标操作的飞船是否可以吸收这个油滴
@@ -158,6 +174,7 @@ public class Main extends PApplet{
         drawSystem.drawShip(playerShip);
         drawSystem.drawBullets(bulletList);
         drawSystem.drawResources(resourceList);
+        drawSystem.drawBlocks(blockList);//block要画在资源的上面
         drawSystem.drawGameLayout(info, playerShip, enemyShip);
     }
 

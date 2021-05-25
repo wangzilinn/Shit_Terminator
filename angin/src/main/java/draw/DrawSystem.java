@@ -232,6 +232,14 @@ public class DrawSystem {
         }
     }
 
+    public void drawBlocks(List<Block> blockList) {
+        for (Block block : blockList) {
+            sketch.stroke(0);
+            sketch.fill(0);
+            sketch.rect(block.getTopLeftCoordinate().x, block.getTopLeftCoordinate().y, block.getWidth(), block.getHeight());
+        }
+    }
+
     public void drawGameLayout(Info info, Ship playerShip, Ship enemyShip) {
         sketch.fill(0);
         sketch.textSize(12);

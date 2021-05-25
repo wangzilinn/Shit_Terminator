@@ -30,9 +30,6 @@ public class Resource {
         this(MoveSystem.randomPosition(), getRandomVolume(), getRandomClass(), getRandomLife());
     }
 
-    /**
-     * 更新位置并画图
-     */
     public void reduceLife() {
         if (remainLife > 0) {
             remainLife -= 1;

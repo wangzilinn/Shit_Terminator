@@ -64,7 +64,7 @@ public class Ship {
                 this.engine = new Engine(resourceContainer, MoveSystem.randomVelocity(), new PVector(0, 0), true);
                 break;
             case PLAYER:
-                this.position = new PVector(Meta.size.x / 2, Meta.size.y / 2);
+                this.position = new PVector(Meta.screenSize.x / 2, Meta.screenSize.y / 2);
                 this.engine = new Engine(resourceContainer, new PVector(0, 0), new PVector(0, 0), false);
                 break;
         }

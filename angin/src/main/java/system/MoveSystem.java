@@ -9,8 +9,8 @@ import processing.core.PVector;
  */
 public class MoveSystem {
     public static PVector randomPosition() {
-        float x = Meta.size.x;
-        float y = Meta.size.y;
+        float x = Meta.screenSize.x;
+        float y = Meta.screenSize.y;
 
         return new PVector((float) Math.random() * x, (float) Math.random() * y);
     }
@@ -25,11 +25,11 @@ public class MoveSystem {
      * @param position 当前entity所在位置
      */
     public static void collisionModel(Engine engine, PVector position) {
-        if (position.x > Meta.size.x || position.x < 0) {
+        if (position.x > Meta.screenSize.x || position.x < 0) {
             PVector velocity = engine.getVelocity();
             velocity.x = -velocity.x;
         }
-        if (position.y > Meta.size.y || position.y < 0) {
+        if (position.y > Meta.screenSize.y || position.y < 0) {
             PVector velocity = engine.getVelocity();
             velocity.y = -velocity.y;
         }
