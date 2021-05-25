@@ -1,4 +1,4 @@
-import Draw.DrawSystem;
+import draw.DrawSystem;
 import annotation.CalledByDraw;
 import entity.*;
 import enums.Direction;
@@ -21,9 +21,6 @@ public class Main extends PApplet{
     Ship playerShip;
     LinkedList<Resource> resourceList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
-
-    double a = 0;
-    int b = 0;
 
     private State state = State.READY;
 
@@ -73,11 +70,10 @@ public class Main extends PApplet{
             return;
         }
         // 产资源:
-        if (b % 3 == 0) {
+        if (frameCount % 10 == 0) {
             Resource resource = new Resource();
             resourceList.add(resource);
         }
-        b++;
 
         enemyShip.move(playerShip.position);
         enemyShip.updateShootDirection(playerShip.position);

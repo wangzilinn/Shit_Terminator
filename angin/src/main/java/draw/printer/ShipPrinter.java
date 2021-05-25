@@ -1,10 +1,8 @@
-package Draw.printer;
+package draw.printer;
 
-import entity.Ship;
+import enums.Color;
 import enums.ResourceClass;
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @Author: wangzilinn@gmail.com
@@ -12,26 +10,47 @@ import lombok.RequiredArgsConstructor;
  */
 public class ShipPrinter {
 
-    //被击中后的帧计数
+    //被击中后的效果:
     /**
      * 在Ship中被设为true后开始显示被集中效果，等到帧显示完之后应变为false
      */
     private boolean showBeingHitEffect = false;
     private int beingHitFrameCnt = 0;
-    final private int beingHitFrame = 60; //120帧
+    final private int beingHitFrame = 60; //60帧
 
-
+    //吸收资源后的效果:
     /**
      * 外面的环的颜色值
      */
     @Getter
-    final private int[] circleColor = new int[]{220, 150, 100, 150, 220};
+    final private int[] ringColorValue = new int[]{240, 150, 100, 150, 240};
+    @Getter
+    private Color ringColor;
 
-    public void updateCircleColor() {
-        int temp = circleColor[circleColor.length - 1];
-        System.arraycopy(circleColor, 0, circleColor, 1, circleColor.length - 1);
-        circleColor[0] = temp;
+    /**
+     * 平移颜色值
+     */
+    public void shiftRingColorValue() {
+        int temp = ringColorValue[0];
+        System.arraycopy(ringColorValue, 1, ringColorValue, 0, ringColorValue.length - 1);
+        ringColorValue[ringColorValue.length - 1] = temp;
     }
+
+    public void startShowingAbsorbResourceEffect(ResourceClass resourceClass) {
+        switch (resourceClass) {
+            case AMMO:
+                ringColor = Color.RED;
+                break;
+            case FUEL:
+                ringColor = Color.GREEN;
+                break;
+            case SHIELD:
+                ringColor = Color.BLUE;
+                break;
+        }
+    }
+
+
 
     public boolean checkIfShowBeingHitEffect() {
         return showBeingHitEffect;

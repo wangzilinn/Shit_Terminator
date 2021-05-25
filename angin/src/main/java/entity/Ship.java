@@ -1,6 +1,6 @@
 package entity;
 
-import Draw.printer.ShipPrinter;
+import draw.printer.ShipPrinter;
 import enums.Direction;
 import enums.ResourceClass;
 import enums.Role;
@@ -79,11 +79,11 @@ public class Ship {
     public boolean checkIfAbsorb(Resource resource) {
         //注意还要考虑Oil的尺寸
         if (role == Role.COMPUTER) {
-            return resource.position.dist(position) < (resource.volume );
+            // 降低飞船的吸收半径,不然太难了
+            return resource.position.dist(position) < (resource.volume);
         }else {
             return resource.position.dist(position) < (resource.volume * 2 + size.x);
         }
-
     }
 
     /**
@@ -95,6 +95,7 @@ public class Ship {
         if (dead) {
             return;
         }
+        printer.startShowingAbsorbResourceEffect(resource.resourceClass);
         resourceContainer.increase(resource.resourceClass, resource.volume);
     }
 

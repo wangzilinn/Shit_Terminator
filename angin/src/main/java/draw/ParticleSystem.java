@@ -1,5 +1,6 @@
-package entity;
+package draw;
 
+import draw.printer.ParticlePrinter;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -14,9 +15,9 @@ import java.util.LinkedList;
 // A class to describe a group of Particles
 // An ArrayList is used to manage the list of Particles
 
-public class ParticleGroup {
+public class ParticleSystem {
     private final PApplet sketch;
-    LinkedList<Particle> particles;
+    LinkedList<ParticlePrinter> particlePrinters;
     /**
      * 离子束的的纵向速度
      */
@@ -30,22 +31,22 @@ public class ParticleGroup {
      */
     int life;
 
-    public ParticleGroup(PApplet sketch, float yVelocity, float xVelocity, int life) {
+    public ParticleSystem(PApplet sketch, float yVelocity, float xVelocity, int life) {
         this.sketch = sketch;
-        particles = new LinkedList<>();
+        particlePrinters = new LinkedList<>();
         this.yVelocity = yVelocity;
         this.xVelocity = xVelocity;
         this.life = life;
     }
 
     public void addParticle(PVector position) {
-        particles.add(new Particle(sketch, position, yVelocity, xVelocity, life));
+        particlePrinters.add(new ParticlePrinter(sketch, position, yVelocity, xVelocity, life));
     }
 
     public void run() {
-        Iterator<Particle> particlesIter = particles.iterator();
+        Iterator<ParticlePrinter> particlesIter = particlePrinters.iterator();
         while (particlesIter.hasNext()) {
-            Particle p = particlesIter.next();
+            ParticlePrinter p = particlesIter.next();
             p.run();
             if (p.isDead()) {
                 particlesIter.remove();

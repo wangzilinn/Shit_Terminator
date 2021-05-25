@@ -1,6 +1,6 @@
-package Draw;
+package draw;
 
-import Draw.printer.ShipPrinter;
+import draw.printer.ShipPrinter;
 import annotation.CalledByDraw;
 import entity.*;
 import enums.ResourceClass;
@@ -26,8 +26,8 @@ public class DrawSystem {
     private final PApplet sketch;
     PVector centerPosition;
     PVector size;
-    ParticleGroup deadPositionParticleGroup;
-    ParticleGroup beingHitParticleGroup;
+    ParticleSystem deadPositionParticleSystem;
+    ParticleSystem beingHitParticleSystem;
     HashMap<Integer, Integer> levelNamesCounterMap;
 
 
@@ -37,8 +37,8 @@ public class DrawSystem {
         System.out.println(sketch.width);
         centerPosition = new PVector((float) sketch.width / 2, (float) sketch.height / 2);
         size = new PVector(sketch.width, sketch.height);
-        deadPositionParticleGroup = new ParticleGroup(sketch, 6, 2, 200);
-        beingHitParticleGroup = new ParticleGroup(sketch, 6, 6, 150);
+        deadPositionParticleSystem = new ParticleSystem(sketch, 6, 2, 200);
+        beingHitParticleSystem = new ParticleSystem(sketch, 6, 6, 150);
     }
 
     /**
@@ -55,8 +55,8 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleGroup.addParticle(shipPosition);
-        deadPositionParticleGroup.run();
+        deadPositionParticleSystem.addParticle(shipPosition);
+        deadPositionParticleSystem.run();
     }
 
     /**
@@ -73,8 +73,8 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleGroup.addParticle(shipPosition);
-        deadPositionParticleGroup.run();
+        deadPositionParticleSystem.addParticle(shipPosition);
+        deadPositionParticleSystem.run();
     }
 
     /**
@@ -91,8 +91,8 @@ public class DrawSystem {
         str = "press space to start";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleGroup.addParticle(shipPosition);
-        deadPositionParticleGroup.run();
+        deadPositionParticleSystem.addParticle(shipPosition);
+        deadPositionParticleSystem.run();
     }
 
     /**
@@ -145,24 +145,37 @@ public class DrawSystem {
             sketch.rect(ship.deadPosition.x, ship.deadPosition.y, ship.size.x, ship.size.y);
             return;
         }
+
         //如果被击中的话，开始画被集中的效果：
         if (shipPrinter.checkIfShowBeingHitEffect()) {
-            beingHitParticleGroup.addParticle(ship.position);
+            beingHitParticleSystem.addParticle(ship.position);
             shipPrinter.increaseBeingHitFrame();
         }
         //之所以不在上面的if中调用该方法是因为可能帧数已经用完了，但是有粒子还存在lifespan，得消耗完
-        beingHitParticleGroup.run();
+        beingHitParticleSystem.run();
 
         //画外面的圈圈:
-        for (int i = 0; i < shipPrinter.getCircleColor().length; i++) {
-            sketch.noFill();
-            sketch.stroke(shipPrinter.getCircleColor()[i]);
-            float radius = ship.size.x + (i + 1) * (1 + i);
-            sketch.ellipse(ship.position.x, ship.position.y, radius, radius);
-        }
-        //更新外面圈圈的颜色
-        if (sketch.frameCount % 6 == 0) {
-            shipPrinter.updateCircleColor();
+        if (shipPrinter.getRingColor() != null) {
+            for (int i = 0; i < shipPrinter.getRingColorValue().length; i++) {
+                sketch.noFill();
+                switch (shipPrinter.getRingColor()) {
+                    case RED:
+                        sketch.stroke(shipPrinter.getRingColorValue()[i], 0, 0);
+                        break;
+                    case GREEN:
+                        sketch.stroke(0, shipPrinter.getRingColorValue()[i], 0);
+                        break;
+                    case BLUE:
+                        sketch.stroke(0, 0, shipPrinter.getRingColorValue()[i]);
+                        break;
+                }
+                float radius = ship.size.x + (i + 1) * (1 + i);
+                sketch.ellipse(ship.position.x, ship.position.y, radius, radius);
+            }
+            //更新外面圈圈的颜色
+            if (sketch.frameCount % 6 == 0) {
+                shipPrinter.shiftRingColorValue();
+            }
         }
         //画飞船本身:
         if (ship.getRole() == Role.PLAYER) {

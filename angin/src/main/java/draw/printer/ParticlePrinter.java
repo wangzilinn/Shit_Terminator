@@ -1,4 +1,4 @@
-package entity;
+package draw.printer;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -10,14 +10,14 @@ import processing.core.PVector;
  */
 // A simple Entity.Particle class
 
-public class Particle{
+public class ParticlePrinter {
     private final PApplet sketch;
     PVector position;
     PVector velocity;
     PVector acceleration;
     int lifespan;
 
-    Particle(PApplet sketch, PVector position, float height, float width, int lifespan) {
+    public ParticlePrinter(PApplet sketch, PVector position, float height, float width, int lifespan) {
         this.sketch = sketch;
         acceleration = new PVector(this.sketch.random(-0.025f, 0.025f), this.sketch.random(-0.025f, 0.025f));
         velocity = new PVector(this.sketch.random(-(width / 2), width / 2), this.sketch.random(-(height / 2),
@@ -26,7 +26,7 @@ public class Particle{
         this.lifespan = lifespan;
     }
 
-    void run() {
+    public void run() {
         update();
         display();
     }
@@ -46,7 +46,7 @@ public class Particle{
     }
 
     // Is the particle still useful?
-    boolean isDead() {
+    public boolean isDead() {
         return lifespan < 0;
     }
 }
