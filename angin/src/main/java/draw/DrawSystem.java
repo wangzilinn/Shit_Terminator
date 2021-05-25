@@ -44,10 +44,10 @@ public class DrawSystem {
     /**
      * 绘制通关页面
      *
-     * @param shipPosition 要显示飞船效果的位置
+     * @param enemyShip 要显示飞船效果的位置
      */
     @CalledByDraw
-    public void drawWinScreen(PVector shipPosition) {
+    public void drawWinScreen(Ship[] enemyShips) {
         String str = "You Win";
         sketch.fill(0);
         sketch.textSize(60);
@@ -55,17 +55,19 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleSystem.addParticle(shipPosition);
-        deadPositionParticleSystem.run();
+        for (Ship enemyShip : enemyShips) {
+            deadPositionParticleSystem.addParticle(enemyShip.position);
+            deadPositionParticleSystem.run();
+        }
     }
 
     /**
      * 绘制失败页面
      *
-     * @param shipPosition 要显示飞船效果的位置
+     * @param enemyShips 要显示飞船效果的位置
      */
     @CalledByDraw
-    public void drawLoseScreen(PVector shipPosition) {
+    public void drawLoseScreen(Ship[] enemyShips) {
         String str = "You Lose";
         sketch.fill(0);
         sketch.textSize(60);
@@ -73,17 +75,19 @@ public class DrawSystem {
         str = "press space to restart";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleSystem.addParticle(shipPosition);
-        deadPositionParticleSystem.run();
+        for (Ship enemyShip : enemyShips) {
+            deadPositionParticleSystem.addParticle(enemyShip.position);
+            deadPositionParticleSystem.run();
+        }
     }
 
     /**
      * 绘制下一关
      *
-     * @param shipPosition 要显示飞船效果的位置
+     * @param enemyShips 要显示飞船效果的位置
      */
     @CalledByDraw
-    public void drawNextLevelScreen(PVector shipPosition) {
+    public void drawNextLevelScreen(Ship[] enemyShips) {
         sketch.fill(0);
         sketch.textSize(60);
         String str = "Next Level";
@@ -91,8 +95,11 @@ public class DrawSystem {
         str = "press space to start";
         sketch.textSize(20);
         sketch.text(str, getAlignX(str, 20, size.x), centerPosition.y + 40);
-        deadPositionParticleSystem.addParticle(shipPosition);
-        deadPositionParticleSystem.run();
+        for (Ship enemyShip : enemyShips) {
+            deadPositionParticleSystem.addParticle(enemyShip.position);
+            deadPositionParticleSystem.run();
+        }
+
     }
 
     /**
@@ -233,11 +240,13 @@ public class DrawSystem {
     }
 
 
-    public void drawGameLayout(Info info, Ship playerShip, Ship enemyShip) {
+    public void drawGameLayout(Info info, Ship playerShip, Ship[] enemyShips) {
         sketch.fill(0);
         sketch.textSize(12);
         drawResourceContainer(playerShip, new PVector(10, 500));
-        drawResourceContainer(enemyShip, new PVector(600, 500));
+        for (int i = 0; i < enemyShips.length; i++) {
+            drawResourceContainer(enemyShips[i], new PVector(300 + i * 100, 500));
+        }
     }
 
     private void drawResourceContainer(Ship ship, PVector position) {

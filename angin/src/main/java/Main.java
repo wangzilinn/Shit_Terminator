@@ -17,7 +17,7 @@ public class Main extends PApplet{
     LinkedHashSet<Character> pressedKeys = new LinkedHashSet<>();
 
     Info info;
-    Ship enemyShip;
+    Ship[] enemyShips;
     Ship playerShip;
     LinkedList<Resource> resourceList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
@@ -33,7 +33,7 @@ public class Main extends PApplet{
     public void setup() {
         info = new Info();
         drawSystem = new DrawSystem(this);
-        enemyShip = new Ship(Role.COMPUTER);
+        enemyShips = new Ship[]{new Ship(Role.COMPUTER)};
         playerShip = new Ship(Role.PLAYER);
     }
 
@@ -44,16 +44,16 @@ public class Main extends PApplet{
                 drawSystem.drawReadyScreen();
                 break;
             case PASS:
-                drawSystem.drawNextLevelScreen(enemyShip.position);
+                drawSystem.drawNextLevelScreen(enemyShips);
                 break;
             case RUNNING:
                 drawGame();
                 break;
             case WIN:
-                drawSystem.drawWinScreen(enemyShip.position);
+                drawSystem.drawWinScreen(enemyShips);
                 break;
             case OVER:
-                drawSystem.drawLoseScreen(enemyShip.position);
+                drawSystem.drawLoseScreen(enemyShips);
                 break;
         }
     }
@@ -74,14 +74,15 @@ public class Main extends PApplet{
             resourceList.add(resource);
         }
 
-        enemyShip.move(playerShip.position);
-        enemyShip.updateShootDirection(playerShip.position);
-
-        if (frameCount % 60 == 0) {
-            System.out.println("enemy shoot");
-            Bullet bullet = enemyShip.shoot(playerShip);
-            if (bullet != null) {
-                bulletList.add(bullet);
+        for (Ship enemyShip : enemyShips) {
+            enemyShip.move(playerShip.position);
+            enemyShip.updateShootDirection(playerShip.position);
+            if (frameCount % 60 == 0) {
+                System.out.println("enemy shoot");
+                Bullet bullet = enemyShip.shoot(playerShip);
+                if (bullet != null) {
+                    bulletList.add(bullet);
+                }
             }
         }
 
@@ -110,10 +111,14 @@ public class Main extends PApplet{
                 System.out.println("player absorb");
                 playerShip.absorbFuel(resource);
                 oilIter.remove();
-            } else if (enemyShip.checkIfAbsorb(resource)) {
-                System.out.println("enemy absorb");
-                enemyShip.absorbFuel(resource);
-                oilIter.remove();
+            } else{
+                for (Ship enemyShip : enemyShips) {
+                    if (enemyShip.checkIfAbsorb(resource)) {
+                        System.out.println("enemy absorb");
+                        enemyShip.absorbFuel(resource);
+                        oilIter.remove();
+                    }
+                }
             }
         }
         //遍历所有子弹,检查子弹是否超出画面,是否击中敌方飞船
@@ -122,9 +127,13 @@ public class Main extends PApplet{
             Bullet bullet = BulletIter.next();
             bullet.move();
             //飞船是否被击中:
-            if (bullet.getRole() == Role.PLAYER && enemyShip.checkIfBeingHit(bullet)) {
-                enemyShip.beingHit(bullet);
-                BulletIter.remove();
+            if (bullet.getRole() == Role.PLAYER){
+                for (Ship enemyShip : enemyShips) {
+                    if (enemyShip.checkIfBeingHit(bullet)) {
+                        enemyShip.beingHit(bullet);
+                        BulletIter.remove();
+                    }
+                }
             } else if (bullet.getRole() == Role.COMPUTER && playerShip.checkIfBeingHit(bullet)) {
                 playerShip.beingHit(bullet);
                 BulletIter.remove();
@@ -135,7 +144,14 @@ public class Main extends PApplet{
         }
 
         // 判断是否游戏状态是否已经改变:
-        if (enemyShip.dead) {
+        boolean allEnemyDead = true;
+        for (Ship enemyShip : enemyShips) {
+            if (!enemyShip.dead) {
+                allEnemyDead = false;
+                break;
+            }
+        }
+        if (allEnemyDead) {
             System.out.println("enemyShip is dead");
             if (info.isMaxLevel()) {
                 state = State.WIN;
@@ -146,7 +162,8 @@ public class Main extends PApplet{
                 info.upgradeLevel();
             }
             playerShip = new Ship(Role.PLAYER);
-            enemyShip = new Ship(Role.COMPUTER);
+            //这里硬编码为第二关需要两个坏蛋
+            enemyShips = new Ship[]{new Ship(Role.COMPUTER), new Ship(Role.COMPUTER)};
         } else if (playerShip.dead) {
             state = State.OVER;
             info.resetLevel();
@@ -154,11 +171,13 @@ public class Main extends PApplet{
         }
 
         //开始绘制画面:
-        drawSystem.drawShip(enemyShip);
+        for (Ship enemyShip : enemyShips) {
+            drawSystem.drawShip(enemyShip);
+        }
         drawSystem.drawShip(playerShip);
         drawSystem.drawBullets(bulletList);
         drawSystem.drawResources(resourceList);
-        drawSystem.drawGameLayout(info, playerShip, enemyShip);
+        drawSystem.drawGameLayout(info, playerShip, enemyShips);
     }
 
     public void keyPressed() {
@@ -181,7 +200,7 @@ public class Main extends PApplet{
     }
 
     public void mousePressed() {
-        Bullet bullet = playerShip.shoot(enemyShip);
+        Bullet bullet = playerShip.shoot(null);
         if (bullet != null) {
             System.out.println("player shoot");
             // if shit doesn't have enough oil,then the bullet is null
