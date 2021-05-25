@@ -69,7 +69,7 @@ public class Main extends PApplet{
             return;
         }
         // 生产资源:
-        if (frameCount % 10 == 0) {
+        if (frameCount % 5 == 0) {
             Resource resource = new Resource();
             resourceList.add(resource);
         }

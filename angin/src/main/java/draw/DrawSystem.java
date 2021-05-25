@@ -146,10 +146,7 @@ public class DrawSystem {
     @CalledByDraw
     public void drawShip(Ship ship) {
         ShipPrinter shipPrinter = ship.getPrinter();
-
         if (ship.dead) {
-            sketch.fill(0);
-            sketch.rect(ship.deadPosition.x, ship.deadPosition.y, ship.size.x, ship.size.y);
             return;
         }
 
@@ -245,7 +242,7 @@ public class DrawSystem {
         sketch.textSize(12);
         drawResourceContainer(playerShip, new PVector(10, 500));
         for (int i = 0; i < enemyShips.length; i++) {
-            drawResourceContainer(enemyShips[i], new PVector(300 + i * 100, 500));
+            drawResourceContainer(enemyShips[i], new PVector(300 + i * 300, 500));
         }
     }
 
