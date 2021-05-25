@@ -126,10 +126,10 @@ public class Main extends PApplet{
             Bullet bullet = BulletIter.next();
             bullet.move();
             //飞船是否被击中:
-            if (bullet.role == Role.PLAYER && enemyShip.checkIfHit(bullet)) {
+            if (bullet.getRole() == Role.PLAYER && enemyShip.checkIfHit(bullet)) {
                 enemyShip.hit(bullet);
                 BulletIter.remove();
-            } else if (bullet.role == Role.COMPUTER && playerShip.checkIfHit(bullet)) {
+            } else if (bullet.getRole() == Role.COMPUTER && playerShip.checkIfHit(bullet)) {
                 playerShip.hit(bullet);
                 BulletIter.remove();
             } else if (bullet.position.x <= 0 || bullet.position.x >= width || bullet.position.y <= 0 || bullet.position.y >= height) {
@@ -161,7 +161,7 @@ public class Main extends PApplet{
         drawSystem.drawShip(enemyShip);
         drawSystem.drawShip(playerShip);
         drawSystem.drawBullets(bulletList);
-        drawSystem.drawOils(resourceList);
+        drawSystem.drawResources(resourceList);
         drawSystem.drawGameLayout(info, playerShip, enemyShip);
     }
 

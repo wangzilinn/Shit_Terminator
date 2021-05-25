@@ -15,8 +15,7 @@ import java.util.Map;
 
 import static processing.core.PApplet.cos;
 import static processing.core.PApplet.sin;
-import static processing.core.PConstants.CLOSE;
-import static processing.core.PConstants.TWO_PI;
+import static processing.core.PConstants.*;
 
 /**
  * @Author: wangzilinn@gmail.com
@@ -169,23 +168,32 @@ public class DrawSystem {
         //画炮塔:
         sketch.pushMatrix();
         sketch.translate(ship.position.x, ship.position.y);
-        sketch.rotate(ship.shootDirection.heading() + PConstants.PI/2);
+        sketch.rotate(ship.shootDirection.heading() + PI / 2);
         sketch.fill(255);
-        sketch.triangle(0, -ship.size.y / 3, -ship.size.x / 3, ship.size.x / 3, ship.size.x / 3, ship.size.x / 3);
+        // 使用正三角形会看不出来是哪个角发射的子弹，因此使用锐角三角形
+        // polygon(0, 0 , (ship.size.y /3 ),3);
+        sketch.triangle(0, -ship.size.y / 3, -ship.size.x / 4, ship.size.x / 3, ship.size.x / 4, ship.size.x / 3);
         sketch.popMatrix();
-
-
     }
 
     public void drawBullets(List<Bullet> bulletList) {
         for (Bullet bullet : bulletList) {
             sketch.fill(0);
             sketch.noStroke();
-            sketch.ellipse(bullet.position.x, bullet.position.y , bullet.size.x, bullet.size.y);
+            if (bullet.getRole() == Role.PLAYER) {
+                sketch.ellipse(bullet.position.x, bullet.position.y , bullet.size.x, bullet.size.y);
+            }else {
+                sketch.pushMatrix();
+                // 修改射出的正三角形的方向：
+                sketch.translate(bullet.position.x, bullet.position.y);
+                sketch.rotate(bullet.getDirectionVector().heading());
+                polygon(0, 0 , (float) (bullet.size.x/1.5),3);
+                sketch.popMatrix();
+            }
         }
     }
 
-    public void drawOils(List<Resource> resourceList) {
+    public void drawResources(List<Resource> resourceList) {
         for (Resource resource : resourceList) {
             int trans = resource.getRemainLife() * 3;
             switch (resource.getResourceClass()) {

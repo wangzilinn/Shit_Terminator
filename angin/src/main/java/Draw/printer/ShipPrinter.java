@@ -1,6 +1,7 @@
 package Draw.printer;
 
 import entity.Ship;
+import enums.ResourceClass;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

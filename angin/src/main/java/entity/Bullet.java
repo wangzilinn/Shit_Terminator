@@ -2,6 +2,8 @@ package entity;
 
 import annotation.CalledByDraw;
 import enums.Role;
+import lombok.Data;
+import lombok.Getter;
 import processing.core.PVector;
 
 /**
@@ -9,6 +11,7 @@ import processing.core.PVector;
  * @Date: 5/16/2021 8:37 PM
  * @Modified: wangzilinn@gmail.com
  */
+@Data
 public class Bullet {
 
     public PVector position;
@@ -17,7 +20,8 @@ public class Bullet {
 
     int distance;
 
-    public Role role;
+    @Getter
+    final private Role role;
 
     /**
      * 这个子弹可以让坏蛋掉多少血
