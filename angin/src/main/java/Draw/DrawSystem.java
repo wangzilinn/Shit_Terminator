@@ -4,6 +4,7 @@ import Draw.printer.ShipPrinter;
 import annotation.CalledByDraw;
 import entity.*;
 import enums.ResourceClass;
+import enums.Role;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -11,6 +12,11 @@ import processing.core.PVector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static processing.core.PApplet.cos;
+import static processing.core.PApplet.sin;
+import static processing.core.PConstants.CLOSE;
+import static processing.core.PConstants.TWO_PI;
 
 /**
  * @Author: wangzilinn@gmail.com
@@ -151,9 +157,15 @@ public class DrawSystem {
         if (sketch.frameCount % 6 == 0) {
             shipPrinter.updateCircleColor();
         }
+        //画飞船本身:
+        if (ship.getRole() == Role.PLAYER) {
+            sketch.fill(0);
+            sketch.ellipse(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
+        }else{
+            sketch.fill(0);
+            polygon(ship.position.x, ship.position.y, ship.size.x / 2,6);
+        }
 
-        sketch.fill(0);
-        sketch.ellipse(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
         //画炮塔:
         sketch.pushMatrix();
         sketch.translate(ship.position.x, ship.position.y);
@@ -226,5 +238,14 @@ public class DrawSystem {
         return (int) (width / 2 - len / 2);
     }
 
-
+    private void polygon(float x, float y, float radius, int npoints) {
+        float angle = TWO_PI / npoints;
+        sketch.beginShape();
+        for (float a = 0; a < TWO_PI; a += angle) {
+            float sx = x + cos(a) * radius;
+            float sy = y + sin(a) * radius;
+            sketch.vertex(sx, sy);
+        }
+        sketch.endShape(CLOSE);
+    }
 }

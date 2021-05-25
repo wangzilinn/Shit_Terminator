@@ -42,7 +42,8 @@ public class Ship {
      */
     private Engine engine;
 
-    private Role role;
+    @Getter
+    final private Role role;
 
     @Getter
     private final ShipPrinter printer;
@@ -50,7 +51,7 @@ public class Ship {
     public Ship(Role role) {
         this.role = role;
         this.deadPosition = new PVector();
-        this.size = new PVector(50, 50);
+        this.size = new PVector(70, 70);
         this.shootDirection = new PVector(1, 1);
 
         this.resourceContainer = new ResourceContainer(100, 100, 100);
@@ -136,7 +137,7 @@ public class Ship {
      * @return 该子弹是否会击中自己
      */
     public boolean checkIfHit(Bullet bullet) {
-        return bullet.position.dist(position) < size.mag();
+        return bullet.position.dist(position) < (size.mag() / 2);
     }
 
     /**
