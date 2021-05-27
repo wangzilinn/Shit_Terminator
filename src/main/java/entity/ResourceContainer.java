@@ -21,7 +21,7 @@ public class ResourceContainer {
     }
 
     public void increase(ResourceClass resourceClass, float amount) {
-        resourceContainerMap.compute(resourceClass, (key, value)->{
+        resourceContainerMap.compute(resourceClass, (key, value) -> {
             if (value == null) {
                 value = 0f;
             }

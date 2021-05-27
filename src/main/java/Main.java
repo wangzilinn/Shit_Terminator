@@ -1,6 +1,8 @@
 import draw.DrawSystem;
-import annotation.CalledByDraw;
-import entity.*;
+import entity.Bullet;
+import entity.Info;
+import entity.Resource;
+import entity.Ship;
 import enums.Direction;
 import enums.Role;
 import enums.State;
@@ -12,7 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-public class Main extends PApplet{
+public class Main extends PApplet {
     // 实现识别多个按键:
     LinkedHashSet<Character> pressedKeys = new LinkedHashSet<>();
 
@@ -21,12 +23,14 @@ public class Main extends PApplet{
     Ship playerShip;
     LinkedList<Resource> resourceList = new LinkedList<>();
     LinkedList<Bullet> bulletList = new LinkedList<>();
-
+    DrawSystem drawSystem;
     private State state = State.READY;
 
-    DrawSystem drawSystem;
+    public static void main(String... args) {
+        PApplet.main("Main");
+    }
 
-    public void settings(){
+    public void settings() {
         size((int) Meta.screenSize.x, (int) Meta.screenSize.y);
     }
 
@@ -61,7 +65,7 @@ public class Main extends PApplet{
     /**
      * 真正执行游戏部分的逻辑
      */
-    @CalledByDraw
+
     private void drawGame() {
         //检查是否需要显示关卡名字:
         if (drawSystem.checkAndDrawLevelNameScreen(info)) {
@@ -107,11 +111,11 @@ public class Main extends PApplet{
             resource.reduceLife();
             if (resource.getRemainLife() <= 0) {
                 oilIter.remove();
-            }else if(playerShip.checkIfAbsorb(resource)) {
+            } else if (playerShip.checkIfAbsorb(resource)) {
                 System.out.println("player absorb");
                 playerShip.absorbFuel(resource);
                 oilIter.remove();
-            } else{
+            } else {
                 for (Ship enemyShip : enemyShips) {
                     if (enemyShip.checkIfAbsorb(resource)) {
                         System.out.println("enemy absorb");
@@ -123,11 +127,11 @@ public class Main extends PApplet{
         }
         //遍历所有子弹,检查子弹是否超出画面,是否击中敌方飞船
         Iterator<Bullet> BulletIter = bulletList.iterator();
-        while(BulletIter.hasNext()){
+        while (BulletIter.hasNext()) {
             Bullet bullet = BulletIter.next();
             bullet.move();
             //飞船是否被击中:
-            if (bullet.getRole() == Role.PLAYER){
+            if (bullet.getRole() == Role.PLAYER) {
                 for (Ship enemyShip : enemyShips) {
                     if (enemyShip.checkIfBeingHit(bullet)) {
                         enemyShip.beingHit(bullet);
@@ -210,9 +214,5 @@ public class Main extends PApplet{
 
     public void mouseMoved() {
         playerShip.updateShootDirection(new PVector(mouseX, mouseY));
-    }
-
-    public static void main(String... args){
-        PApplet.main("Main");
     }
 }

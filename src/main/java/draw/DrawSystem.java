@@ -1,8 +1,10 @@
 package draw;
 
 import draw.printer.ShipPrinter;
-import annotation.CalledByDraw;
-import entity.*;
+import entity.Bullet;
+import entity.Info;
+import entity.Resource;
+import entity.Ship;
 import enums.ResourceClass;
 import enums.Role;
 import processing.core.PApplet;
@@ -31,7 +33,6 @@ public class DrawSystem {
     HashMap<Integer, Integer> levelNamesCounterMap;
 
 
-
     public DrawSystem(PApplet sketch) {
         this.sketch = sketch;
         System.out.println(sketch.width);
@@ -44,9 +45,9 @@ public class DrawSystem {
     /**
      * 绘制通关页面
      *
-     * @param  enemyShips 要显示敌方飞船
+     * @param enemyShips 要显示敌方飞船
      */
-    @CalledByDraw
+
     public void drawWinScreen(Ship[] enemyShips) {
         String str = "You Win";
         sketch.fill(0);
@@ -66,7 +67,7 @@ public class DrawSystem {
      *
      * @param enemyShips 要显示飞船效果的位置
      */
-    @CalledByDraw
+
     public void drawLoseScreen(Ship[] enemyShips) {
         String str = "You Lose";
         sketch.fill(0);
@@ -86,7 +87,7 @@ public class DrawSystem {
      *
      * @param enemyShips 要显示飞船效果的位置
      */
-    @CalledByDraw
+
     public void drawNextLevelScreen(Ship[] enemyShips) {
         sketch.fill(0);
         sketch.textSize(60);
@@ -105,7 +106,7 @@ public class DrawSystem {
     /**
      * 绘制打开游戏的第一个界面
      */
-    @CalledByDraw
+
     public void drawReadyScreen() {
         sketch.fill(0);
         sketch.textSize(60);
@@ -122,7 +123,7 @@ public class DrawSystem {
      * @param info 游戏信息
      * @return 是否显示了关卡名字
      */
-    @CalledByDraw
+
     public boolean checkAndDrawLevelNameScreen(Info info) {
         if (levelNamesCounterMap == null) {
             levelNamesCounterMap = new HashMap<>();
@@ -143,7 +144,6 @@ public class DrawSystem {
     }
 
 
-    @CalledByDraw
     public void drawShip(Ship ship) {
         ShipPrinter shipPrinter = ship.getPrinter();
         if (ship.dead) {
@@ -185,9 +185,9 @@ public class DrawSystem {
         if (ship.getRole() == Role.PLAYER) {
             sketch.fill(0);
             sketch.ellipse(ship.position.x, ship.position.y, ship.size.x, ship.size.y);
-        }else{
+        } else {
             sketch.fill(0);
-            polygon(ship.position.x, ship.position.y, ship.size.x / 2,6);
+            polygon(ship.position.x, ship.position.y, ship.size.x / 2, 6);
         }
 
         //画炮塔:
@@ -206,13 +206,13 @@ public class DrawSystem {
             sketch.fill(0);
             sketch.noStroke();
             if (bullet.getRole() == Role.PLAYER) {
-                sketch.ellipse(bullet.position.x, bullet.position.y , bullet.size.x, bullet.size.y);
-            }else {
+                sketch.ellipse(bullet.position.x, bullet.position.y, bullet.size.x, bullet.size.y);
+            } else {
                 sketch.pushMatrix();
                 // 修改射出的正三角形的方向：
                 sketch.translate(bullet.position.x, bullet.position.y);
                 sketch.rotate(bullet.getDirectionVector().heading());
-                polygon(0, 0 , (float) (bullet.size.x/1.5),3);
+                polygon(0, 0, (float) (bullet.size.x / 1.5), 3);
                 sketch.popMatrix();
             }
         }
@@ -232,7 +232,7 @@ public class DrawSystem {
                     sketch.fill(0, 0, 255, trans);
             }
             sketch.noStroke();
-            sketch.ellipse(resource.position.x, resource.position.y, resource.getVolume() * 2,resource.getVolume() * 2);
+            sketch.ellipse(resource.position.x, resource.position.y, resource.getVolume() * 2, resource.getVolume() * 2);
         }
     }
 
@@ -247,10 +247,10 @@ public class DrawSystem {
     }
 
     private void drawResourceContainer(Ship ship, PVector position) {
-        sketch.text("Remaining ammo:" + (int)ship.resourceContainer.get(ResourceClass.AMMO), position.x, position.y);
-        sketch.text("Remaining fuel:" + (int)ship.resourceContainer.get(ResourceClass.FUEL), position.x,
+        sketch.text("Remaining ammo:" + (int) ship.resourceContainer.get(ResourceClass.AMMO), position.x, position.y);
+        sketch.text("Remaining fuel:" + (int) ship.resourceContainer.get(ResourceClass.FUEL), position.x,
                 position.y + 20);
-        sketch.text("Remaining Shield:" + (int)ship.resourceContainer.get(ResourceClass.SHIELD), position.x,
+        sketch.text("Remaining Shield:" + (int) ship.resourceContainer.get(ResourceClass.SHIELD), position.x,
                 position.y + 40);
     }
 

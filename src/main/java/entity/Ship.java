@@ -18,6 +18,11 @@ import system.MoveSystem;
 
 public class Ship {
 
+    final private Gun gun;
+    @Getter
+    final private Role role;
+    @Getter
+    private final ShipPrinter printer;
     /**
      * 盛放不同资源的容器
      */
@@ -28,25 +33,16 @@ public class Ship {
      */
     public PVector deadPosition;
     public PVector size;
-
     public PVector position;
-    PVector lastPosition;
-
     /**
      * 射击部分:
      */
     public PVector shootDirection;
-    final private Gun gun;
+    PVector lastPosition;
     /**
      * 移动部分:
      */
     private Engine engine;
-
-    @Getter
-    final private Role role;
-
-    @Getter
-    private final ShipPrinter printer;
 
     public Ship(Role role) {
         this.role = role;
@@ -81,7 +77,7 @@ public class Ship {
         if (role == Role.COMPUTER) {
             // 降低飞船的吸收半径,不然太难了
             return resource.position.dist(position) < (resource.volume);
-        }else {
+        } else {
             return resource.position.dist(position) < (resource.volume * 2 + size.x);
         }
     }
@@ -102,6 +98,7 @@ public class Ship {
 
     /**
      * 键盘移动
+     *
      * @param direction 移动方向
      */
     public void move(Direction direction) {
@@ -121,6 +118,7 @@ public class Ship {
 
     /**
      * 自动移动
+     *
      * @param enemyPosition 敌方飞船位置
      */
     public void move(PVector enemyPosition) {
@@ -143,6 +141,7 @@ public class Ship {
 
     /**
      * 执行被击中的逻辑
+     *
      * @param bullet 被击中时的子弹
      */
     public void beingHit(Bullet bullet) {
@@ -161,10 +160,10 @@ public class Ship {
         Bullet bullet = null;
         switch (role) {
             case PLAYER:
-                bullet =  gun.shoot(position.copy(), shootDirection.copy());
+                bullet = gun.shoot(position.copy(), shootDirection.copy());
                 break;
             case COMPUTER:
-                bullet =  AimingSystem.directShootModel(gun, position, enemyShip.position);
+                bullet = AimingSystem.directShootModel(gun, position, enemyShip.position);
                 break;
         }
         return bullet;

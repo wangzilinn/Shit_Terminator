@@ -8,6 +8,7 @@ import processing.core.PVector;
 
 /**
  * 为entity提供射击能力
+ *
  * @Author: wangzilinn@gmail.com
  * @Date: 5/23/2021 12:24 PM
  */
@@ -22,7 +23,7 @@ public class Gun {
     private Role role;
 
     /**
-     * @param position 枪的当前坐标
+     * @param position       枪的当前坐标
      * @param shootDirection 发射方向
      * @return 子弹
      */

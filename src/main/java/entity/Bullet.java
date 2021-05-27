@@ -1,6 +1,5 @@
 package entity;
 
-import annotation.CalledByDraw;
 import enums.Role;
 import lombok.Data;
 import lombok.Getter;
@@ -14,15 +13,12 @@ import processing.core.PVector;
 @Data
 public class Bullet {
 
+    @Getter
+    final private Role role;
     public PVector position;
     public PVector size;
     PVector directionVector;
-
     int distance;
-
-    @Getter
-    final private Role role;
-
     /**
      * 这个子弹可以让坏蛋掉多少血
      */
@@ -36,7 +32,7 @@ public class Bullet {
         this.role = role;
     }
 
-    @CalledByDraw
+
     public void move() {
         distance++;
         position.add(directionVector.copy().mult(5));

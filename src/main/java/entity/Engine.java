@@ -1,12 +1,12 @@
 package entity;
 
 import enums.Direction;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import processing.core.PVector;
 
 /**
  * 为entity提供移动能力(组合优于继承)
+ *
  * @Author: wangzilinn@gmail.com
  * @Date: 5/23/2021 12:21 PM
  */
@@ -34,7 +34,7 @@ public class Engine {
     }
 
     private Engine(ResourceContainer resourceContainer, PVector velocity, PVector acceleration, boolean enableAcceleration,
-             boolean enableVelocityLimiter, float maxVelocity) {
+                   boolean enableVelocityLimiter, float maxVelocity) {
         this.resourceContainer = resourceContainer;
         this.velocity = velocity;
         this.acceleration = acceleration;
@@ -60,7 +60,7 @@ public class Engine {
                 case RIGHT:
                     acceleration.x = 1;
             }
-        }else {
+        } else {
             velocity = new PVector(0, 0);
             switch (direction) {
                 case UP:

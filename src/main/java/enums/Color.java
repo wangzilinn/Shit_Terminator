@@ -1,7 +1,6 @@
 package enums;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
 /**
  * @Author: wangzilinn@gmail.com

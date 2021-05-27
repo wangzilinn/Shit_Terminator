@@ -30,19 +30,13 @@ public class Resource {
         this(MoveSystem.randomPosition(), getRandomVolume(), getRandomClass(), getRandomLife());
     }
 
-    public void reduceLife() {
-        if (remainLife > 0) {
-            remainLife -= 1;
-        }
-    }
-
     private static ResourceClass getRandomClass() {
         double rand = Math.random();
         if (rand > 0.6) {
             return ResourceClass.AMMO;
         } else if (rand > 0.3) {
             return ResourceClass.SHIELD;
-        }else {
+        } else {
             return ResourceClass.FUEL;
         }
     }
@@ -53,5 +47,11 @@ public class Resource {
 
     private static int getRandomLife() {
         return (int) (Math.random() * 600);
+    }
+
+    public void reduceLife() {
+        if (remainLife > 0) {
+            remainLife -= 1;
+        }
     }
 }

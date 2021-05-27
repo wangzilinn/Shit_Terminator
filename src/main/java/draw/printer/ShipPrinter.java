@@ -11,19 +11,19 @@ import lombok.Getter;
 public class ShipPrinter {
 
     //被击中后的效果:
-    /**
-     * 在Ship中被设为true后开始显示被集中效果，等到帧显示完之后应变为false
-     */
-    private boolean showBeingHitEffect = false;
-    private int beingHitFrameCnt = 0;
     final private int beingHitFrame = 60; //60帧
-
-    //吸收资源后的效果:
     /**
      * 外面的环的颜色值
      */
     @Getter
     final private int[] ringColorValue = new int[]{240, 150, 100, 150, 240};
+    /**
+     * 在Ship中被设为true后开始显示被集中效果，等到帧显示完之后应变为false
+     */
+    private boolean showBeingHitEffect = false;
+
+    //吸收资源后的效果:
+    private int beingHitFrameCnt = 0;
     @Getter
     private Color ringColor;
 
@@ -49,7 +49,6 @@ public class ShipPrinter {
                 break;
         }
     }
-
 
 
     public boolean checkIfShowBeingHitEffect() {
