@@ -61,7 +61,7 @@ public class Ship {
         switch (this.role) {
             case COMPUTER:
                 this.position = MoveSystem.randomPosition();
-                this.engine = new Engine(resourceContainer, MoveSystem.randomVelocity(), new PVector(0, 0), true);
+                this.engine = new Engine(resourceContainer, MoveSystem.randomVelocity(), new PVector(0, 0), true, 5);
                 break;
             case PLAYER:
                 this.position = new PVector(Meta.screenSize.x / 2, Meta.screenSize.y / 2);

@@ -11,7 +11,6 @@ import processing.core.PVector;
  * @Date: 5/23/2021 12:21 PM
  */
 @Data
-@AllArgsConstructor
 public class Engine {
     /**
      * 引擎剩余的燃料
@@ -20,6 +19,30 @@ public class Engine {
     private PVector velocity;
     private PVector acceleration;
     private boolean enableAcceleration;
+
+    private boolean enableVelocityLimiter = false;
+    private float maxVelocity = 20;
+
+    public Engine(ResourceContainer resourceContainer, PVector velocity, PVector acceleration,
+                  boolean enableAcceleration) {
+        this(resourceContainer, velocity, acceleration, enableAcceleration, false, 0);
+    }
+
+    public Engine(ResourceContainer resourceContainer, PVector velocity, PVector acceleration,
+                  boolean enableAcceleration, float maxVelocity) {
+        this(resourceContainer, velocity, acceleration, enableAcceleration, true, maxVelocity);
+    }
+
+    private Engine(ResourceContainer resourceContainer, PVector velocity, PVector acceleration, boolean enableAcceleration,
+             boolean enableVelocityLimiter, float maxVelocity) {
+        this.resourceContainer = resourceContainer;
+        this.velocity = velocity;
+        this.acceleration = acceleration;
+        this.enableAcceleration = enableAcceleration;
+        this.enableVelocityLimiter = enableVelocityLimiter;
+        this.maxVelocity = maxVelocity;
+    }
+
 
     public void setDirection(Direction direction) {
         if (enableAcceleration) {
@@ -58,6 +81,9 @@ public class Engine {
     public PVector getVelocity() {
         accLimiter(0.03f);
         velocity.add(acceleration);
+        if (enableVelocityLimiter) {
+            velocityLimiter();
+        }
         return velocity;
     }
 
@@ -75,4 +101,17 @@ public class Engine {
             acceleration.y = -limit;
         }
     }
+
+    private void velocityLimiter() {
+        if (velocity.mag() > maxVelocity) {
+            velocity = velocity.normalize(null).mult(maxVelocity);
+        }
+    }
+
+    public void setVelocityLimiter(float limiter) {
+        maxVelocity = limiter;
+        enableVelocityLimiter = true;
+    }
+
+
 }
