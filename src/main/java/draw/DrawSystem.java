@@ -44,7 +44,7 @@ public class DrawSystem {
     /**
      * 绘制通关页面
      *
-     * @param enemyShip 要显示飞船效果的位置
+     * @param  enemyShips 要显示敌方飞船
      */
     @CalledByDraw
     public void drawWinScreen(Ship[] enemyShips) {

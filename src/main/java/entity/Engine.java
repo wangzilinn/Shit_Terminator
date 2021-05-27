@@ -20,8 +20,8 @@ public class Engine {
     private PVector acceleration;
     private boolean enableAcceleration;
 
-    private boolean enableVelocityLimiter = false;
-    private float maxVelocity = 20;
+    private boolean enableVelocityLimiter;
+    private float maxVelocity;
 
     public Engine(ResourceContainer resourceContainer, PVector velocity, PVector acceleration,
                   boolean enableAcceleration) {
