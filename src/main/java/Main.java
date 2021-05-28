@@ -171,6 +171,8 @@ public class Main extends PApplet {
         } else if (playerShip.dead) {
             state = State.OVER;
             info.resetLevel();
+            enemyShips = new Ship[]{new Ship(Role.COMPUTER)};
+            playerShip = new Ship(Role.PLAYER);
             drawSystem.resetDrawLevelNameScreenCounter();
         }
 
